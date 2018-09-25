@@ -247,19 +247,19 @@
 								<li><a href="/wiki/add/">新建文档</a></li>
 								<li><a href="/wiki/index/">文档列表</a></li>
 							</ul> <!-- /.nav-second-level --></li>		
-						<li><a href="#"><i class="fa  fa-ticket fa-fw"></i> 工单系统<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="#">工单申请<span class="fa arrow"></span></a>
-									<ul class="nav nav-third-level">
-										<li><a href="/order/deploy/apply/">代码部署</a></li>
-										<li><a href="/order/sql/apply/">上线SQL</a></li>
-										<li><a href="/order/file/upload/list/1/">文件分发</a></li>
-										<li><a href="/order/file/download/list/1/">文件下载</a></li>
-									</ul></li>
-								<li><a href="/order/list/1/">工单列表</a></li>
-								<li><a href="/order/search/">工单查询</a></li>
-							</ul> <!-- /.nav-second-level --></li>													                  
+{#						<li><a href="#"><i class="fa  fa-ticket fa-fw"></i> 工单系统<span#}
+{#								class="fa arrow"></span></a>#}
+{#							<ul class="nav nav-second-level">#}
+{#								<li><a href="#">工单申请<span class="fa arrow"></span></a>#}
+{#									<ul class="nav nav-third-level">#}
+{#										<li><a href="/order/deploy/apply/">代码部署</a></li>#}
+{#										<li><a href="/order/sql/apply/">上线SQL</a></li>#}
+{#										<li><a href="/order/file/upload/list/1/">文件分发</a></li>#}
+{#										<li><a href="/order/file/download/list/1/">文件下载</a></li>#}
+{#									</ul></li>#}
+{#								<li><a href="/order/list/1/">工单列表</a></li>#}
+{#								<li><a href="/order/search/">工单查询</a></li>#}
+{#							</ul> <!-- /.nav-second-level --></li>#}
                         <li>
                             <a href="/config"><i class="fa fa-wrench fa-fw"></i> 全局配置</a>
                         </li>                           
@@ -497,6 +497,7 @@
 							    	<button type="button" class="btn btn-default" onclick="fcDumpsAssetsData(this)"><i class="fa fa-refresh fa-fw"></i>导出资产</button>
 								    <button type="button" class="btn btn-default" onclick="updateAllAssets(this,'update')"><i class="fa fa-refresh fa-fw"></i>批量更新</button>
 								    <button type="button" class="btn btn-default" onclick="updateAllAssets(this,'delete')"><i class="fa fa-trash-o fa-fw"></i>批量删除</button>
+                                    <button type="button" class="btn btn-default" onclick="updateAllAssets(this,'syncitop')"><i class="fa fa-refresh fa-fw"></i>批量同步iTop</button>
 								</div>                         
                               <i class="fa fa-database"></i>资产明细
                                                         
@@ -931,6 +932,8 @@
 	  	else if (model=='delete'){
 	  		var url = '/assets/batch/delete/'
 	  	}
+	  	else if (model=='syncitop')
+	  	    var url = '/assets_syncitop/'
 	  	if (serverId.length > 0){
 			$.ajax({
 				  type: 'POST',
