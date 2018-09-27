@@ -98,6 +98,8 @@ urlpatterns = [
     url(r'^order/',include('orders.urls')),
     url(r'^api/',include('api.urls')),
     url(r'^file/',include('filemanage.urls')),
+    url(r'^itop/',include('itop_api.urls')),
+    url(r'^zabbix/',include('zabbix_api.urls')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

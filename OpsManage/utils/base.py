@@ -21,9 +21,9 @@ def file_iterator(file_name, chunk_size=512):
             break 
     f.close()
 
-def sendEmail(e_from,e_to,e_host,e_passwd,e_sub="It's a test email.",e_content="test",cc_to=None,attachFile=None):
+def sendEmail(e_from,e_to,e_host,e_passwd,e_sub="It's a test email.",e_content="test",cc_to=None,attachFile=None,format='html'):
     msg = MIMEMultipart() 
-    EmailContent = MIMEText(e_content,_subtype='html',_charset='utf-8')
+    EmailContent = MIMEText(e_content,_subtype=format,_charset='utf-8')
     msg['Subject'] = "%s " % e_sub
     msg['From'] = e_from
     if e_to.find(',') == -1:
@@ -47,7 +47,7 @@ def sendEmail(e_from,e_to,e_host,e_passwd,e_sub="It's a test email.",e_content="
         msg.attach(EmailContent)
         smtp=smtplib.SMTP()
         smtp.connect(e_host)
-        smtp.login(e_from,e_passwd)
+        smtp.login(e_from.split('@')[0],e_passwd)
         smtp.sendmail(e_from,e_to,msg.as_string())
         smtp.quit()
     except Exception , e:
