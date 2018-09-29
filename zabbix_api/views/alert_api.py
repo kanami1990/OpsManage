@@ -9,7 +9,7 @@ from django.http import Http404,JsonResponse
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import permission_required
 from OpsManage.utils.logger import logger
-from dao.alert import ZabbixSource
+from dao.zabbix import ZabbixSource
 from zabbix_api import serializers
 from zabbix_api.models import ZabbixAlert
 from OpsManage.models import Email_Config
@@ -32,7 +32,7 @@ def alert_detail(request, id,format=None):
     if request.method == 'GET':
         zs = ZabbixSource()
         if zs.queryLogbyEventid(id):
-            (send_to,subject,message) = zs.queryAlertsbyEventid(id,None)
+            (send_to,subject,message) = zs.queryAlertsbyEventid(id)
             zs.addLog(int(id),subject,str(send_to),message)
 
             config = Email_Config.objects.get(id=1)

@@ -11,6 +11,7 @@ from OpsManage.models import (Global_Config,Email_Config,Assets,
                               Cron_Config,Log_Assets,Project_Config,
                               Ansible_Playbook)
 from orders.models import Order_System
+from zabbix_api.models import Zabbix_Config
 from django.contrib.auth.decorators import permission_required
 
 @login_required(login_url='/login')
@@ -143,8 +144,12 @@ def config(request):
             email = Email_Config.objects.get(id=1)
         except:
             email =None
+        try:
+            zabbix = Zabbix_Config.objects.get(id=1)
+        except:
+            zabbix = None
         return render(request,'config.html',{"user":request.user,"config":config,
-                                                 "email":email})
+                                                 "email":email,"zabbix":zabbix})
     elif request.method == "POST":
         if request.POST.get('op') == "log":
             try:
@@ -200,6 +205,29 @@ def config(request):
                                             passwd =  request.POST.get('passwd',None),
                                             subject =  request.POST.get('subject',None),
                                             cc_user =  request.POST.get('cc_user',None), 
-                                            )    
+                                            )
+            return JsonResponse({'msg': '配置修改成功', "code": 200, 'data': []})
+        elif request.POST.get('op') == "zabbix":
+            try:
+                count = Zabbix_Config.objects.filter(id=1).count()
+            except:
+                count = 0
+            if count > 0:
+                Zabbix_Config.objects.filter(id=1).update(
+                    site = request.POST.get('site'),
+                    host = request.POST.get('host',None),
+                    port = request.POST.get('port',None),
+                    user=request.POST.get('user', None),
+                    passwd=request.POST.get('passwd', None),
+
+                )
+            else:
+                Zabbix_Config.objects.create(
+                    site=request.POST.get('site'),
+                    host=request.POST.get('host', None),
+                    port=request.POST.get('port', None),
+                    user=request.POST.get('user', None),
+                    passwd=request.POST.get('passwd', None),
+                )
             return JsonResponse({'msg':'配置修改成功',"code":200,'data':[]}) 
         

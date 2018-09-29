@@ -18,7 +18,9 @@
 				              <li class="active"><a href="#home" data-toggle="tab"><i class="fa fa-history"></i> 日志记录</a>
 				              </li>
 				              <li><a href="#profile" data-toggle="tab"><i class="fa fa-envelope"></i> 部署通知</a>
-				              </li>			              
+				              </li>
+                              <li><a href="#zabbix" data-toggle="tab"><i class="fa fa-envelope"></i> zabbix配置</a>
+				              </li>
 				           </ul>
 				
 				                            
@@ -247,7 +249,66 @@
 												</form>				                   			
 										</div>
 				                   </div>
-				              </div>				              				             				              
+				              </div>
+                              <div class="tab-pane fade" id="zabbix">
+				                   <div class="row">
+				                   		<div class="col-lg-12">
+				                   			<br>
+											<form role="form" method="post" id="addZabbix" class="main form-horizontal" >{% csrf_token %}
+
+												<div class="form-group" >
+													 <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>
+													 <div class="col-sm-6">
+													 	<input class="form-control" type="text" value="{{zabbix.site}}" placeholder="http://192.168.1.233" name="site" />
+													 </div>
+												</div>
+
+												<div class="form-group" >
+													 <label class="col-sm-2 control-label"><i class="fa fa-user"></i> Zabbix API服务器地址</label>
+													 <div class="col-sm-6">
+													 	<input class="form-control" type="text" value="{{zabbix.host}}" placeholder="http://172.21.14.23/zabbix/" name="host" />
+													 </div>
+												</div>
+
+												<div class="form-group" >
+													 <label class="col-sm-2 control-label"><i class="fa fa-subscript"></i> Zabbix API服务器端口</label>
+													 <div class="col-sm-6">
+													 	<input class="form-control" type="text" id="form-field-3" value="{{zabbix.port}}" placeholder="80" name="port" />
+													 </div>
+												</div>
+
+												<div class="form-group" >
+													 <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i> zabbix账户</label>
+													 <div class="col-sm-6">
+													 	<input class="form-control" type="text" value="{{zabbix.user}}" placeholder="Admin" name="user" />
+													 </div>
+												</div>
+
+												<div class="form-group" >
+													 <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> Zabbix密码</label>
+													 <div class="col-sm-6">
+													 	<input class="form-control" type="password" id="form-field-3" value="{{zabbix.passwd}}" placeholder="hjiuy89" name="passwd" />
+													 </div>
+												</div>
+
+												<div class="hr hr32 hr-dotted"></div>
+												<div class="form-group">
+													<div class="col-md-offset-3 col-md-9">
+														<button class="btn btn-default" type="buttun" onclick="addZabbixData(this)">
+															<i class="fa fa-check"></i>
+																			提交
+														</button>
+																		&nbsp; &nbsp; &nbsp;
+														<button class="btn btn-default" type="reset">
+															<i class="fa fa-undo"></i>
+																			撤销
+														</button>
+													</div>
+												</div>
+												</form>
+										</div>
+				                   </div>
+				              </div>
 				           </div>
 
 
@@ -332,7 +393,44 @@
 		    		window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
 		    	}
 			})	
-		}		
+		}
+
+		function addZabbixData(obj) {
+			var btnObj = $(obj);
+			btnObj.attr('disabled',true);
+			var required = ["host","port","user","passwd","site"];
+			var post_data = {};
+			var putUrl = '/config/';
+			var form = document.getElementById('addZabbix');
+			for (var i = 1; i < form.length; ++i) {
+				var name = form[i].name;
+				var value = form[i].value;
+				idx = $.inArray(name, required);
+				if (idx >= 0 && value.length == 0){
+					window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+					return false;
+				};
+				if ( value.length != 0 && name.length != 0 ){
+					post_data[name] = value;
+				};
+			};
+			post_data['op'] = 'zabbix';
+			$.ajax({
+				dataType: "JSON",
+				url:putUrl, //请求地址
+				type:"POST",  //提交类似
+				data:post_data, //提交参数
+				success:function(response){
+					btnObj.removeAttr('disabled');
+					window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
+// 					location.reload();
+				},
+		    	error:function(response){
+		    		btnObj.removeAttr('disabled');
+		    		window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
+		    	}
+			})
+		}
   
 </script>
 
