@@ -29,17 +29,17 @@ def alert_list(request,format=None):
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_required('zabbix_api.can_read_zabbix',raise_exception=True)
 def alert_detail(request, id,format=None):
+    zs = ZabbixSource()
     if request.method == 'GET':
-        zs = ZabbixSource()
         if zs.queryLogbyEventid(id):
             (send_to,subject,message) = zs.queryAlertsbyEventid(id)
-            zs.addLog(int(id),subject,str(send_to),message)
 
             config = Email_Config.objects.get(id=1)
 
             base.sendEmail(e_from=config.user,e_to=send_to,cc_to=None,
                    e_host=config.host,e_passwd=config.passwd,
                    e_sub=subject,e_content=message,format='plain')
+            zs.addLog(int(id), subject, str(send_to), message,'sended')
             rtnMsg = {"send_to":send_to,"subject":subject,"message":message}
         else:
             rtnMsg = {"rtnCode":"300"}

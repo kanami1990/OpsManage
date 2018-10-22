@@ -39,6 +39,7 @@ class ZabbixSource(object):
             )
             self.token = r.json()['result']
             self.zabbixuid = r.json()['id']
+            Zabbix_Config.objects.filter(id=1).update(token=self.token,userid=self.zabbixuid)
 
 
     def queryAlertsbyEventid(self,eventId):
@@ -71,8 +72,8 @@ class ZabbixSource(object):
         else:
             return True
 
-    def addLog(self,event,subject,send_to,message):
-        log = ZabbixAlert.objects.create(event_id=event,subject=subject,send_to=send_to,message=message)
+    def addLog(self,event,subject,send_to,message,send_flag):
+        log = ZabbixAlert.objects.create(event_id=event,subject=subject,send_to=send_to,message=message,send_flag=send_flag)
         return log
 
 

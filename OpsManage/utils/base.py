@@ -50,8 +50,9 @@ def sendEmail(e_from,e_to,e_host,e_passwd,e_sub="It's a test email.",e_content="
         smtp.login(e_from.split('@')[0],e_passwd)
         smtp.sendmail(e_from,e_to,msg.as_string())
         smtp.quit()
-    except Exception , e:
-        print e
+    except Exception as e:
+        logger.error(e.message)
+        print(e)
   
 def radString(length=8,chars=string.ascii_letters+string.digits):
     return ''.join([choice(chars) for i in range(length)])
