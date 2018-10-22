@@ -17,6 +17,7 @@ class ZabbixSource(object):
                 self.zabbixapi = '{}/api_jsonrpc.php'.format(zabbix.host)
                 self.zabbixuser = zabbix.user
                 self.zabbixpwd = zabbix.passwd
+                print(zabbix.token)
                 if zabbix.token:
                     self.token = zabbix.token
                     self.zabbixuid = zabbix.userid
@@ -28,7 +29,17 @@ class ZabbixSource(object):
 
     def getToken(self):
         headers = {'content-type': 'application/json'}
-        payload = '{"jsonrpc":"2.0","method":"user.login","params":{"user":"{}","password":"{}"},"id":1,"auth":null}'.format(self.zabbixuser,self.zabbixpwd)
+        d1 = {}
+        d1['jsonrpc'] = '2.0'
+        d1['method'] = 'user.login'
+        d1['id'] = '1'
+        d1['auth'] = None
+        d2 = {}
+        d2['user'] = self.zabbixuser
+        d2['password'] = self.zabbixpwd
+        d1['params'] = d2
+        payload = json.dumps(d1)
+        # payload = '{"jsonrpc":"2.0","method":"user.login","params":{"user":"{}","password":"{}"},"id":1,"auth":null}'.format(self.zabbixuser,self.zabbixpwd)
         r = requests.post(self.zabbixapi, data=payload, headers=headers)
         if r.json().has_key('error'):
             print(r.json())
@@ -40,6 +51,7 @@ class ZabbixSource(object):
             self.token = r.json()['result']
             self.zabbixuid = r.json()['id']
             Zabbix_Config.objects.filter(id=1).update(token=self.token,userid=self.zabbixuid)
+            return self.token
 
 
     def queryAlertsbyEventid(self,eventId):
