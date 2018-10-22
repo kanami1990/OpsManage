@@ -15,8 +15,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from OpsManage.utils.logger import logger
 from OpsManage.utils.execl import CellWriter
 
-ITOPURL = 'http://172.21.14.23/api/virtualmachine'
-
 def getBaseAssets():
     try:
         groupList = Group.objects.all()
@@ -694,59 +692,6 @@ def assets_update(request):
             return JsonResponse({'msg':"数据更新成功","code":200,'data':{"success":sList,"failed":fList}}) 
         else:return JsonResponse({'msg':"数据更新失败","code":500,'data':{"success":sList,"failed":fList}}) 
 
-@login_required(login_url='/login')
-@permission_required('OpsManage.can_change_assets',login_url='/noperm/')
-def assets_syncitop(request):
-    # TODO add sync to itop code
-    if request.method == "POST":
-        fList = []
-        sList = []
-        for ast in request.POST.getlist('assetsIds[]'):
-            try:
-                assets = Assets.objects.get(id=int(ast))
-            except Exception, ex:
-                logger.warn(msg="批量更新获取资产失败: {ex}".format(ex=str(ex)))
-                continue
-            if assets.assets_type in ['vmser','server']:
-                try:
-                    server_assets = Server_Assets.objects.get(assets=assets)
-                except Exception, ex:
-                    logger.warn(msg="批量更新获取服务器资产失败: {ex}".format(ex=str(ex)))
-                    if server_assets.ip not in fList:fList.append(server_assets.ip)
-                    continue
-            if assets.put_zone:
-                try:
-                    zone = Zone_Assets.objects.get(id=int(assets.put_zone))
-                except Exception, ex:
-                    logger.warn(msg="批量更新获取服务器租户失败: {ex}".format(ex=str(ex)))
-                    if server_assets.ip not in fList:fList.append(server_assets.ip)
-                    continue
-                reqiTopDict = {}
-                reqiTopDict['status'] = u'运行'
-                reqiTopDict['hostname'] = server_assets.hostname
-                reqiTopDict['ip'] = server_assets.ip
-                reqiTopDict['ram'] = int(server_assets.ram_total)/1024
-                reqiTopDict['hdd'] = int(server_assets.disk_total)/1024
-                reqiTopDict['user'] = zone.zone_name
-                reqiTopDict['os'] = server_assets.system
-                reqiTopDict['cpu'] = server_assets.cpu_core
-                if 'cn-' not in reqiTopDict['user']:
-                    reqiTopDict['host'] = 'ESXi'
-                else:
-                    reqiTopDict['host'] = ''
-                # reqJson = json.dumps(reqiTopDict,ensure_ascii=True)
-                json_str = json.dumps(reqiTopDict)
-                r = requests.post(ITOPURL,json=reqiTopDict)
-                # result = json.loads(r.text)
-                print r.text
-                if 'Error' not in r.text:
-                    if reqiTopDict['ip'] not in sList: sList.append(reqiTopDict['ip'])
-                else:
-                    if reqiTopDict['ip'] not in fList: fList.append(reqiTopDict['ip'])
-        if sList:
-            return JsonResponse({'msg': "测试成功", "code": 200, 'data': {"success": sList,"failed":fList}})
-        else:
-            return JsonResponse({'msg':"测试失败","code":500,'data':{"success": sList,"failed":fList}})
 
 @login_required(login_url='/login')
 @permission_required('OpsManage.can_delete_assets',login_url='/noperm/')
