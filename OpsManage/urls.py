@@ -100,6 +100,7 @@ urlpatterns = [
     url(r'^file/',include('filemanage.urls')),
     url(r'^itop/',include('itop_api.urls')),
     url(r'^zabbix/',include('zabbix_api.urls')),
+    url(r'^wechat/',include('weChat.urls')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -107,6 +107,7 @@ INSTALLED_APPS = (
     'filemanage',
     'itop_api',
     'zabbix_api',
+    'weChat',
 )
 
 MIDDLEWARE_CLASSES = (

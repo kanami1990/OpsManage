@@ -1,0 +1,254 @@
+{% extends 'index.html' %}
+{% block ace-content %} 
+<!-- bootstrap-notify -->
+<script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+<script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>
+{% endblock %}
+{% block page-content %}
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"><i class="fa fa-user"></i> WeChat应用列表</h1>
+        </div>
+    </div>
+
+    <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="btn-group btn-group-xs pull-right">
+{#							    	<button type="button" class="btn btn-default"><a href="#" data-toggle="modal" data-target="#myAssetsImportModal"><i class="fa fa-pencil fa-fw"></i>批量导入</a></button>#}
+{#							    	<button type="button" class="btn btn-default" onclick="fcDumpsAssetsData(this)"><i class="fa fa-refresh fa-fw"></i>导出资产</button>#}
+								    <button type="button" class="btn btn-default" onclick="undefindfunc(this,'update')"><i class="fa fa-refresh fa-fw"></i>未定义功能</button>
+{#								    <button type="button" class="btn btn-default" onclick="updateAllAssets(this,'delete')"><i class="fa fa-trash-o fa-fw"></i>批量删除</button>#}
+								</div>
+                            	<i class="fa  fa-github-alt  "></i> 已注册微信App列表
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+{#                        	<div>#}
+{#                        		<button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#myProjectModal"><i class="glyphicon glyphicon-plus"></i></button>#}
+{#                        	</div>#}
+							<table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer" id="appList">
+	                                <thead>
+                                        <tr>
+                                            <th class="text-center">ID</th>
+                                            <th class="text-center">应用类型</th>
+                                            <th class="text-center">应用名称</th>
+                                            <th class="text-center">应用AgentId</th>
+                                            <th class="text-center">应用Secret</th>
+                                            <th class="text-center">组织ID</th>
+                                            <th class="text-center">应用备注</th>
+                                            <th class="text-center">最近更新</th>
+                                            <th class="text-center">操作</th>
+                                        </tr>
+	                                </thead>
+	                                <tbody>
+                                    	{% for ds in applist %}
+	                                        <tr>
+	                                            <td>{{ds.id}}</td>
+	                                            <td>{{ds.app_type}}</td>
+	                                            <td>{{ds.app_name}}</td>
+	                                            <td>{{ds.app_agentid}}</td>
+	                                            <td>{{ds.app_secret}}</td>
+	                                            <td>{{ds.app_corpid}}</td>
+	                                            <td>{{ds.app_mark}}</td>
+	                                            <td>{{ds.update_date}}</td>
+	                                            <td class="text-center">
+	                                            	<button  type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#modfAppModal-{{ds.id}}"><abbr title="编辑"><i class="glyphicon glyphicon-edit"></i></button>
+	                                            	<button  type="button" class="btn btn-xs btn-default" onclick="delAppData(this,'app',{{ds.id}})"><abbr title="删除"><i class="glyphicon glyphicon-trash"></i></abbr></button>
+	                                            	<button  type="button" class="btn btn-xs btn-default" onclick="updateAppData(this,'app',{{ds.id}})"><abbr title="更新Token"><i class="glyphicon glyphicon-refresh"></i></abbr></button>
+{#	                                            	<a href="/assets/groups/{{ds.id}}/" style="text-decoration:none;"><button  type="button" class="btn btn-xs btn-default"><abbr title="查看组织结构图"><i class="fa fa-users  "></i></button></a>#}
+	                                            </td>
+	                                        </tr>
+                                        {% endfor %}
+	                                </tbody>
+	                       	</table>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+            </div>
+
+{% for ds in applist %}
+	<div class="modal fade" id="modfAppModal-{{ds.id}}" tabindex="-1" role="dialog" aria-labelledby="modfAppModalLabel-{{ds.id}}" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="modfAppModalLabel-{{ds.id}}">
+						App信息
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form" id="app_{{ds.id}}">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>App类型</strong></label>
+							<div class="col-sm-6">
+                                <select class="form-control" name="app_type" >
+														<option value={{ds.app_type}} name="app_type">消息推送</option>
+                                    </select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>App名称</strong></label>
+							<div class="col-sm-6">
+								<input class="form-control" type="text" name="app_name" value="{{ds.app_name|default:""}}"/>
+							</div>
+						</div>
+                        <div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>AppAgentId</strong></label>
+							<div class="col-sm-6">
+								<input class="form-control" type="text" name="app_agentid" value="{{ds.app_agentid|default:""}}"/>
+							</div>
+						</div>
+                        <div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>AppSecret</strong></label>
+							<div class="col-sm-6">
+								<input class="form-control" type="text" name="app_secret" value="{{ds.app_secret|default:""}}"/>
+							</div>
+						</div>
+                        <div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>AppCorpId</strong></label>
+							<div class="col-sm-6">
+								<input class="form-control" type="text" name="app_corpid" value="{{ds.app_corpid|default:""}}"/>
+							</div>
+						</div>
+                        <div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>App备注</strong></label>
+							<div class="col-sm-6">
+								<input class="form-control" type="text" name="app_mark" value="{{ds.app_mark|default:""}}"/>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+					</button>
+					<button type="button" class="btn btn-primary" onclick="modfAppData(this,{{ds.id}},'app')">
+						修改
+					</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+{% endfor %}
+
+</div>
+
+<script type="text/javascript">
+    function modfAppData(obj,id,op) {
+		var btnObj = $(obj);
+		btnObj.attr('disabled',true);
+		var post_data = {};
+		if (op=="app"){
+			var putUrl = '/wechat/app/'+id+'/';
+			var form = document.getElementById('app_'+id);
+		}
+
+		for (var i = 0; i < form.length; ++i) {
+			var name = form[i].name;
+			var value = form[i].value;
+			post_data[name] = value;
+			if ( value.length == 0){
+				window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+				btnObj.removeAttr('disabled');
+				return false;
+			}
+			else{
+				post_data[name] = value;
+			};
+
+		};
+		$.ajax({
+			dataType: "JSON",
+			url:putUrl, //请求地址
+			type:"PUT",  //提交类似
+			data:post_data, //提交参数
+			success:function(response){
+				btnObj.removeAttr('disabled');
+				window.wxc.xcConfirm("App修改成功", window.wxc.xcConfirm.typeEnum.success);
+ 				location.reload();
+
+			},
+	    	error:function(response){
+	    		btnObj.removeAttr('disabled');
+	    		window.wxc.xcConfirm("App修改失败", window.wxc.xcConfirm.typeEnum.error);
+/* 	    		location.reload(); */
+	    	}
+		})
+	}
+
+	function delAppData(obj,op,id) {
+		var btnObj = $(obj);
+		btnObj.attr('disabled',true);
+		var txt=  "是否确认删除？";
+		var post_data = {};
+		if (op=="app"){
+			var putUrl = '/wechat/app/'+id+'/';
+		}
+		var option = {
+				title: "id-"+id,
+				btn: parseInt("0011",2),
+				onOk: function(){
+					$.ajax({
+						  type: 'DELETE',
+						  url:putUrl,
+					      success:function(response){
+					    	btnObj.removeAttr('disabled');
+		                	window.wxc.xcConfirm("删除成功！", window.wxc.xcConfirm.typeEnum.success);
+		                	location.reload();
+					      },
+			              error:function(response){
+			            	btnObj.removeAttr('disabled');
+			            	window.wxc.xcConfirm("删除失败！", window.wxc.xcConfirm.typeEnum.error);
+			              }
+						});
+				},
+				onCancel:function(){
+				},
+				onClose:function(){
+				}
+			}
+			window.wxc.xcConfirm(txt, "custom", option);
+		}
+
+    function updateAppData(obj,op,id) {
+		var btnObj = $(obj);
+		btnObj.attr('disabled',true);
+		var txt=  "更新Token有次数限制，是否进行强制更新？";
+		var post_data = {};
+		if (op=="app"){
+			var putUrl = '/wechat/app/'+id+'/';
+		}
+		var option = {
+				title: "id-"+id,
+				btn: parseInt("0011",2),
+				onOk: function(){
+					$.ajax({
+						  type: 'GET',
+						  url:putUrl,
+					      success:function(response){
+					    	btnObj.removeAttr('disabled');
+		                	window.wxc.xcConfirm("更新Token成功！", window.wxc.xcConfirm.typeEnum.success);
+		                	location.reload();
+					      },
+			              error:function(response){
+			            	btnObj.removeAttr('disabled');
+			            	window.wxc.xcConfirm("更新Token失败！", window.wxc.xcConfirm.typeEnum.error);
+			              }
+						});
+				},
+				onCancel:function(){
+				},
+				onClose:function(){
+				}
+			}
+			window.wxc.xcConfirm(txt, "custom", option);
+		}
+</script>
+{% endblock %}
