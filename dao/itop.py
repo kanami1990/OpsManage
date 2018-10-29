@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # _#_ coding:utf-8 _*_
-import requests,json,ConfigParser
+import requests,json
 from itop_api.models import ITOP_Config
 from OpsManage.utils.logger import logger
-from OpsManage.settings import ITOP_CONF_DIR
 
 
 class ItopSource(object):
