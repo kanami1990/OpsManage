@@ -1,18 +1,27 @@
 #!/usr/bin/env python
 # _#_ coding:utf-8 _*_
 import requests,json,ConfigParser
+from itop_api.models import ITOP_Config
 from OpsManage.utils.logger import logger
 from OpsManage.settings import ITOP_CONF_DIR
 
 
 class ItopSource(object):
     def __init__(self):
-        self.path = ITOP_CONF_DIR
-        itop_conf = ConfigParser.ConfigParser()
-        itop_conf.read(self.path)
-        self.itop_url = itop_conf.get('itop','url')
-        self.itop_user = itop_conf.get('itop','user')
-        self.itop_pwd = itop_conf.get('itop','password')
+        # self.path = ITOP_CONF_DIR
+        # itop_conf = ConfigParser.ConfigParser()
+        # itop_conf.read(self.path)
+        # self.itop_url = itop_conf.get('itop','url')
+        # self.itop_user = itop_conf.get('itop','user')
+        # self.itop_pwd = itop_conf.get('itop','password')
+        try:
+            itopConf = ITOP_Config.objects.get(id=1)
+            self.itop_url = itopConf.host + 'webservices/rest.php?version=1.3'
+            self.itop_user = itopConf.user
+            self.itop_pwd = itopConf.passwd
+        except:
+            self.itop_url = self.itop_user =self.itop_pwd = None
+        # print('url = {}\nuser = {}\npasswd = {}'.format(self.itop_url,self.itop_user,self.itop_pwd))
         super(ItopSource,self).__init__()
 
     def query_by_id(self,dataModel,requestid,fields):
