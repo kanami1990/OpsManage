@@ -11,4 +11,4 @@ media*
 *.log
 ./logs/opsmanage.log
 .quarantine
-.idea
+.idea/
