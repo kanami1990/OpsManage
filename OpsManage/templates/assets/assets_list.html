@@ -1168,6 +1168,40 @@
 		window.wxc.xcConfirm(txt, "custom", option);			   
 	}
 
+	function syncitop(obj,id){
+		var txt=  "是否确认更新？";
+		var btnObj = $(obj);
+		var serverId = [id]
+		btnObj.attr('disabled',true);
+		var option = {
+			title: "更新当前资产",
+			btn: parseInt("0011",2),
+			onOk: function(){
+				$.ajax({
+					  type: 'POST',
+					  url: '/itop/assets_syncitop/',
+                      data:{
+					  'assetsIds':serverId,
+				  },
+				      success:function(response){
+				    	btnObj.removeAttr('disabled');
+			            window.wxc.xcConfirm("更新成功", window.wxc.xcConfirm.typeEnum.success);
+			            location.reload('/assets_list/');
+				      },
+		              error:function(response){
+		            	btnObj.removeAttr('disabled');
+		            	window.wxc.xcConfirm("更新失败！", window.wxc.xcConfirm.typeEnum.error);
+		              }
+					});
+			},
+			onCancel:function(){
+			},
+			onClose:function(){
+			}
+		}
+		window.wxc.xcConfirm(txt, "custom", option);
+	}
+
 	function assetsUpdate(obj, id,ip,type){
 			var btnObj = $(obj);
 			var txt=  "是否确认更新？";
