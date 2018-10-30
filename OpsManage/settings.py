@@ -205,7 +205,3 @@ SFTP_CONF = {
 WORKSPACES = '/var/lib/opsmanage/workspaces/' 
 
 LOGIN_URL = '/login'
-
-ITOP_CONF_DIR = os.path.join(BASE_DIR,"conf/itop.ini")
-ZABBIX_CONF_DIR = os.path.join(BASE_DIR,"conf/zabbix.ini")
-

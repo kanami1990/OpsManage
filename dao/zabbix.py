@@ -72,7 +72,8 @@ class ZabbixSource(object):
         sendtolist = []
         for item in r.json()['result']:
             if item['sendto']:
-                sendtolist.append(item['sendto'])
+                # sendtolist.append(item['sendto'])
+                sendtolist.extend(item['sendto'].split(','))
                 subject = item['subject']
                 message = item['message']
         return(','.join(sendtolist),subject,message)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python  
 # _#_ coding:utf-8 _*_  
-import os,xlrd,time,json,requests
+import os,xlrd,time,json,requests,uuid
 from django.http import JsonResponse,StreamingHttpResponse
 from django.shortcuts import render,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -63,7 +63,9 @@ def assets_list(request):
     userList = User.objects.all()
     assetsList = Assets.objects.all().order_by("-id") 
     for ds in assetsList:
-        ds.nks = ds.networkcard_assets_set.all() 
+        ds.nks = ds.networkcard_assets_set.all()
+        if '-' in ds.name:
+            ds.name = ds.name.split('-')[0]
     assetOnline = Assets.objects.filter(status=0).count()
     assetOffline = Assets.objects.filter(status=1).count()
     assetMaintain = Assets.objects.filter(status=2).count()
@@ -318,9 +320,11 @@ def assets_import(request):
         dataList = getAssetsData(fname=filename)
         #获取服务器列表
         for data in dataList:
+            print(data[15])
             assets = {
                       'assets_type':data[0],
-                      'name':data[1],
+                      # 'name':data[1],
+                      'name':uuid.uuid5(uuid.NAMESPACE_URL,str(data[15])),
                       'sn':data[2],
                       'buy_user':int(data[5]),
                       'management_ip':data[6],

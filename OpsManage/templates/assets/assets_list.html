@@ -961,12 +961,13 @@
 			    	else{
 			    		window.wxc.xcConfirm(msg, window.wxc.xcConfirm.typeEnum.error);
 			    	}
-				    btnObj.removeAttr('disabled');		            
+				    btnObj.removeAttr('disabled');
 			      },
 	              error:function(response){
 	            	btnObj.removeAttr('disabled');
 	            	window.wxc.xcConfirm("更新失败！", window.wxc.xcConfirm.typeEnum.error);	
 	              }
+
 				});			
 	  	}
 	  	else{
@@ -1000,8 +1001,14 @@
 	                "data":      null,
 	                "defaultContent": ''
 	            },
+
 	            { "data": "全选" },
-	            { "data": "资产ID" },
+	            {#{ "data": "资产ID" },#}
+                {
+                    "data": "资产ID",
+                    "targets": [ 2 ],
+                    "visible": false
+                },
 	            { "data": "资产类型" },
 	            { "data": "管理IP" },
 	            { "data": "资产编号" },
