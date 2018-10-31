@@ -57,7 +57,7 @@ def vm_list(request,format=None):
             msgDict['name'] = req_info['ip']
             msgDict['org_id'] = 'SELECT Organization'
             msgDict['status'] = statusDecode(req_info['status'])
-            msgDict['virtualhost_id'] = 'SELECT VirtualHost WHERE name =\'CSV\''
+            msgDict['virtualhost_id'] = 'SELECT VirtualHost WHERE name =\'cluster1\''
             msgDict['cpu'] = req_info['cpu']
             msgDict['ram'] = req_info['ram']
             msgDict['exc_hostname'] = req_info['hostname']
@@ -141,7 +141,7 @@ def assets_syncitop(request):
                 msgDict['name'] = server_assets.ip
                 msgDict['org_id'] = 'SELECT Organization'
                 msgDict['status'] = statusDecode(u'运行')
-                msgDict['virtualhost_id'] = 'SELECT VirtualHost WHERE name =\'CSV\''
+                msgDict['virtualhost_id'] = 'SELECT VirtualHost WHERE name =\'cluster1\''
                 msgDict['cpu'] = server_assets.cpu_core
                 msgDict['ram'] = int(server_assets.ram_total) / 1024
                 msgDict['exc_hostname'] = server_assets.hostname
@@ -173,7 +173,6 @@ def assets_syncitop(request):
                     res = json.loads(its.update_object_by_dict(dataModel, msgDict, filterDict))
                 else:
                     res = json.loads(its.create_object_without_callerid(dataModel, msgDict))
-
                 if 'Error' not in res:
                     if server_assets.ip not in sList: sList.append(server_assets.ip)
                 else:
