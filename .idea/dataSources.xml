@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Django zabbixdb" uuid="5f1a9b62-dcec-4814-b8de-2e51f8b292fa">
+    <data-source source="LOCAL" name="Django default" uuid="34a6858e-0229-4b20-bea3-c67030695a8c">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <remarks>$PROJECT_DIR$/OpsManage/settings.py</remarks>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://172.21.14.22:3306/zabbix</jdbc-url>
+      <jdbc-url>jdbc:mysql://172.21.14.24:3306/opsmanage</jdbc-url>
       <driver-properties>
         <property name="autoReconnect" value="true" />
         <property name="yearIsDateType" value="false" />
@@ -17,13 +17,13 @@
         <property name="tinyInt1isBit" value="false" />
       </driver-properties>
     </data-source>
-    <data-source source="LOCAL" name="Django default" uuid="df657101-06ad-468c-bd04-04290a0916ec">
+    <data-source source="LOCAL" name="Django zabbixdb" uuid="fac148fb-4efa-4f11-9b15-bb46689a18be">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <remarks>$PROJECT_DIR$/OpsManage/settings.py</remarks>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://172.21.14.24:3306/opsmanage</jdbc-url>
+      <jdbc-url>jdbc:mysql://172.21.14.22:3306/zabbix</jdbc-url>
       <driver-properties>
         <property name="autoReconnect" value="true" />
         <property name="yearIsDateType" value="false" />

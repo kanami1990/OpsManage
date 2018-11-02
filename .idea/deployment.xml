@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="172.21.14.23-opsManager">
+  <component name="PublishConfigData" autoUpload="Always" serverName="23-opsmanage">
     <serverData>
-      <paths name="172.21.14.23-opsManager">
+      <paths name="23-opsmanage">
         <serverdata>
           <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
