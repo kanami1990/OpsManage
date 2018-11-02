@@ -101,6 +101,7 @@ urlpatterns = [
     url(r'^itop/',include('itop_api.urls')),
     url(r'^zabbix/',include('zabbix_api.urls')),
     url(r'^wechat/',include('weChat.urls')),
+    url(r'^dpyconsole/',include('deployconsole.urls')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

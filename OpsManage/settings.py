@@ -108,6 +108,7 @@ INSTALLED_APPS = (
     'itop_api',
     'zabbix_api',
     'weChat',
+    'deployconsole',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -138,7 +139,7 @@ ROOT_URLCONF = 'OpsManage.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ["/home/redial/opsManager/OpsManage/static/",'/home/redial/opsManagerOpsManage/templates/'],
+        'DIRS': ["/home/redial/opsManager/OpsManage/static/",'/home/redial/opsManager/OpsManage/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
