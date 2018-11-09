@@ -1,0 +1,269 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+    <!-- bootstrap-notify -->
+    {#    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>#}
+    {#    <script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>#}
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa  fa-signal"></i> 投产单详细内容</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-institution    fa-fw"></i> 基础信息
+                    </div>
+                    <div class="panel-body">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-upload fa-fw"></i> 任务单号
+                                <span class="pull-right text-muted small"><code>{{ dpyRequest.friendlyname }}</code>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-heart fa-fw"></i> 任务状态
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.status }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-tasks fa-fw"></i> 标题
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.title }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-upload fa-fw"></i> 描述
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.description }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-upload fa-fw"></i> 数据库任务数
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.db_task|length }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-upload fa-fw"></i> jenkins任务数
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.jenkins_task|length }}</em>
+                                    </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-institution    fa-fw"></i> 人员信息
+                    </div>
+                    <div class="panel-body">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-upload fa-fw"></i> 发起人
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.caller_id_friendlyname }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-heart fa-fw"></i> 处理人
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.agent_id_friendlyname }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-envelope fa-fw"></i> 审批人
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.approver_id_friendlyname }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-tasks fa-fw"></i> 数据库
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.db_p_id_friendlyname }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-upload fa-fw"></i> 开发
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.dev_p_id_friendlyname }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-upload fa-fw"></i> 测试
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.test_p_id_friendlyname }}</em>
+                                    </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-institution    fa-fw"></i> 时间信息
+                    </div>
+                    <div class="panel-body">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-upload fa-fw"></i> 投产时间窗口
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.deploy_windows }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-heart fa-fw"></i> 审批时间
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.assignment_date }}</em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-envelope fa-fw"></i> 最后更新
+                                <span class="pull-right text-muted small"><em>{{ dpyRequest.last_update }}</em>
+                                    </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-institution    fa-fw"></i> 公共日志
+                    </div>
+                    <div class="panel-body">
+                        <div class="list-group">
+                            {% for entry in dpyRequest.public_log.entries %}
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-tasks fa-fw"></i> {{ entry.message }}
+                                    <span class="pull-right text-muted small"><em>{{ entry.user_login }}</em>
+                                    </span>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-institution    fa-fw"></i> 投产任务
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#jenkins" data-toggle="tab"><i class="fa fa-tasks"></i> Jenkins</a>
+                            </li>
+                            <li><a href="#db" data-toggle="tab"><i class="fa fa-tasks"></i> 数据库</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="jenkins">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <br>
+                                        <table width="100%" class="table table-striped table-bordered table-hover"
+                                               id="JenkinsList">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center">ID</th>
+                                                <th class="text-center">Jenkins任务</th>
+                                                <th class="text-center">应用名称</th>
+                                                <th class="text-center">版本号</th>
+                                                <th class="text-center">系统模块</th>
+                                                <th class="text-center">任务状态</th>
+                                                <th class="text-center">负责人</th>
+                                                <th class="text-center">操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for entry in  dpyRequest.jenkins_task %}
+                                                <tr class="odd gradeX">
+                                                    <td class="text-center">{{ entry.jk_dpno }} </td>
+                                                    <td class="text-center">{{ entry.name }} </td>
+                                                    <td class="text-center">{{ entry.jk_appname }} </td>
+                                                    <td class="text-center">{{ entry.jk_revno }} </td>
+                                                    <td class="text-center">{{ entry.jk_sysmod_id_friendlyname }} </td>
+                                                    <td class="text-center">
+                                                        {% if entry.status == "closed" %}
+                                                            可投产
+                                                        {% else %}
+                                                            不可投产
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="text-center">{{ entry.dev_p_id_friendlyname }}</td>
+                                                    <td class="text-center">
+                                                    <button  type="button" class="btn btn-xs btn-default" onclick="doTask(this,'{{ entry.jk_appname }}')"><i class="glyphicon glyphicon-play"></i></button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="db">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <br>
+                                        <table width="100%" class="table table-striped table-bordered table-hover"
+                                               id="DbList">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center">ID</th>
+                                                <th class="text-center">脚本名称</th>
+                                                <th class="text-center">Schema</th>
+                                                <th class="text-center">脚本文件名</th>
+                                                <th class="text-center">脚本说明</th>
+                                                <th class="text-center">Git路径</th>
+                                                <th class="text-center">任务状态</th>
+                                                <th class="text-center">负责人</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for entry in  dpyRequest.db_task %}
+                                                <tr class="odd gradeX">
+                                                    <td class="text-center">{{ entry.db_dpno }} </td>
+                                                    <td class="text-center">{{ entry.name }} </td>
+                                                    <td class="text-center">{{ entry.db_schema }} </td>
+                                                    <td class="text-center">{{ entry.db_name }} </td>
+                                                    <td class="text-center">{{ entry.db_note1 }} </td>
+                                                    <td class="text-center"><a>{{ entry.db_path }}</a></td>
+                                                    <td class="text-center">
+                                                        {% if entry.status == "closed" %}
+                                                            可投产
+                                                        {% else %}
+                                                            不可投产
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="text-center">{{ entry.dev_p_id_friendlyname }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        {#        {% for entry in  dpyRequest.jenkins_task %}#}
+        {#            {{ entry.jk_appname }}#}
+        {#        {% endfor %}#}
+
+
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#JenkinsList').DataTable();
+        });
+        $(document).ready(function () {
+            $('#DbList').DataTable();
+        });
+
+        function doTask(obj,model){
+            alert(model)
+        }
+
+    </script>
+{% endblock %}

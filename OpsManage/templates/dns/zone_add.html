@@ -1,0 +1,177 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+    <!-- bootstrap-notify -->
+    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+    <script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa fa-user"></i> 新增自建Zone</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        自建Zone录入
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-2">
+                            </div>
+                            <div class="col-lg-8">
+                                <fieldset>
+                                    <legend>自建Zone录入 - 必填信息</legend>
+                                    <form role="form" method="post" id="addZone"
+                                          class="main form-horizontal">{% csrf_token %}
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">dns_tag</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="dns_tag" name="dns_tag"
+                                                           placeholder="dns_tag" value="" class="input-xlarge"
+                                                           required/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">dns_server</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="dns_server"
+                                                           name="dns_server" placeholder="dns_server" value=""
+                                                           class="input-xlarge" required/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">domain_zone</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="domain_zone"
+                                                           name="domain_zone" placeholder="domain_zone" value=""
+                                                           class="input-xlarge" required/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">zone_key</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="zone_key"
+                                                           name="zone_key" placeholder="zone_key" value=""
+                                                           class="input-xlarge" required/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">zone_secret</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="zone_secret"
+                                                           name="zone_secret" placeholder="zone_secret" value=""
+                                                           class="input-xlarge" required/>
+                                                </div>
+                                            </div>
+
+                                        </fieldset>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <button type="reset" class="btn btn-default">撤销操作</button>
+                                            <button type="button" class="btn btn-default" onclick="addZoneData(this)">
+                                                确认提交
+                                            </button>
+                                        </div>
+
+                                    </form>
+                                </fieldset>
+                            </div>
+
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        function getFormData(form, filler) {
+            var zone = {};
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                if (name.length == 0)
+                    continue;
+                try {
+                    value = value.replace(/\n/g, '<br/>');
+                } catch (e) {
+                    alert(e);
+                }
+                if (value.length == 0) {
+                    if ((typeof filler != 'string') || (filler.length == 0))
+                        continue;
+                    else
+                        value = filler;
+                }
+                var asz = "zone." + name + " = '" + value + "'";
+                try {
+                    eval(asz);
+                } catch (e) {
+                    alert(e);
+                }
+                }
+                return zone
+            }
+
+            var app = ['dns_tag', 'dns_server', 'domain_zone', 'zone_key', 'zone_secret'];
+
+            function addZoneData(obj) {
+                var form = document.getElementById('addZone');
+                for (var i = 0; i < form.length; ++i) {
+                    var name = form[i].name;
+                    var value = form[i].value;
+                    var appStart = name.indexOf("zone_");
+                    if (appStart == 0 && value.length == 0 && app.indexOf(name) >= 0) {
+                        $("[name='" + name + "']").parent().addClass("has-error");
+                        window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                        return false;
+                    } else if (appStart == 0 && value.length > 0) {
+                        $("[name='" + name + "']").parent().removeClass("has-error");
+                        $("[name='" + name + "']").parent().addClass("has-success");
+                    }
+
+                }
+                var app_data = getFormData(document.getElementById('addZone'), '');
+                var btnObj = $(obj);
+
+                var putUrl = '/dns/zone/';
+                {#alert(app_data.name)#}
+                $.ajax({
+                    dataType: "JSON",
+                    url: putUrl, //请求地址
+                    type: "POST",  //提交类似
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        'data': app_data
+                    }),  //提交参数
+                    success: function (response) {
+                        window.wxc.xcConfirm("应用添加成功", window.wxc.xcConfirm.typeEnum.success);
+                    },
+                    error: function (response) {
+                        $.notify({
+                                title: "<strong>Zone添加错误:</strong><br>",
+                                message: response.responseText
+                            },
+                            {
+                                type: 'danger',
+                                delay: 3600000
+                            });
+                    }
+                })
+            }
+    </script>
+{% endblock %}

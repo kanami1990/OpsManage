@@ -108,7 +108,8 @@ INSTALLED_APPS = (
     'itop_api',
     'zabbix_api',
     'weChat',
-    # 'deployconsole',
+    'deployconsole',
+    'dnsc',
 )
 
 MIDDLEWARE_CLASSES = (
