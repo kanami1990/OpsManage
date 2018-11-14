@@ -23,6 +23,8 @@
 				              </li>
                                <li><a href="#itop" data-toggle="tab"><i class="fa fa-dashboard"></i> iTop配置</a>
 				              </li>
+                               <li><a href="#jenkins" data-toggle="tab"><i class="fa fa-dashboard"></i> Jenkins配置</a>
+				              </li>
 				           </ul>
 				
 				                            
@@ -363,6 +365,58 @@
 										</div>
 				                   </div>
 				              </div>
+                               <div class="tab-pane fade" id="jenkins">
+				                   <div class="row">
+				                   		<div class="col-lg-12">
+				                   			<br>
+											<form role="form" method="post" id="addJenkins" class="main form-horizontal" >{% csrf_token %}
+
+{#												<div class="form-group" >#}
+{#													 <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>#}
+{#													 <div class="col-sm-6">#}
+{#													 	<input class="form-control" type="text" value="{{itop.site}}" placeholder="http://192.168.1.233" name="site" />#}
+{#													 </div>#}
+{#												</div>#}
+
+												<div class="form-group" >
+													 <label class="col-sm-2 control-label"><i class="fa fa-user"></i> Jenkins服务器地址</label>
+													 <div class="col-sm-6">
+													 	<input class="form-control" type="text" value="{{jenkins.host}}" placeholder="http://172.21.14.23/itop/" name="host" />
+													 </div>
+												</div>
+
+												<div class="form-group" >
+													 <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i> Jenkins账户</label>
+													 <div class="col-sm-6">
+													 	<input class="form-control" type="text" value="{{jenkins.user}}" placeholder="Admin" name="user" />
+													 </div>
+												</div>
+
+												<div class="form-group" >
+													 <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> Jenkins密码</label>
+													 <div class="col-sm-6">
+													 	<input class="form-control" type="password" id="form-field-3" value="{{jenkins.passwd}}" placeholder="3edcvfr4" name="passwd" />
+													 </div>
+												</div>
+
+												<div class="hr hr32 hr-dotted"></div>
+												<div class="form-group">
+													<div class="col-md-offset-3 col-md-9">
+														<button class="btn btn-default" type="buttun" onclick="addJenkinsData(this)">
+															<i class="fa fa-check"></i>
+																			提交
+														</button>
+																		&nbsp; &nbsp; &nbsp;
+														<button class="btn btn-default" type="reset">
+															<i class="fa fa-undo"></i>
+																			撤销
+														</button>
+													</div>
+												</div>
+												</form>
+										</div>
+				                   </div>
+				              </div>
 				           </div>
 
 
@@ -506,6 +560,36 @@
 				};
 			};
 			post_data['op'] = 'itop';
+			$.ajax({
+				dataType: "JSON",
+				url:putUrl, //请求地址
+				type:"POST",  //提交类似
+				data:post_data, //提交参数
+				success:function(response){
+					btnObj.removeAttr('disabled');
+					window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
+// 					location.reload();
+				},
+		    	error:function(response){
+		    		btnObj.removeAttr('disabled');
+		    		window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
+		    	}
+			})
+		}
+
+		function addJenkinsData(obj) {
+			var btnObj = $(obj);
+			btnObj.attr('disabled',true);
+			var required = ["host","user","passwd"];
+			var post_data = {};
+			var putUrl = '/config/';
+			var form = document.getElementById('addJenkins');
+			for (var i = 1; i < form.length; ++i) {
+				var name = form[i].name;
+				var value = form[i].value;
+                post_data[name] = value;
+			};
+			post_data['op'] = 'jenkins';
 			$.ajax({
 				dataType: "JSON",
 				url:putUrl, //请求地址

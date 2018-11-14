@@ -14,7 +14,7 @@ def deploy_console(request):
     if request.method == 'GET':
         iconn = itop.ItopSource()
         dataModel = 'DeployRequest'
-        OQL = "SELECT {} WHERE status='assigned'".format(dataModel)
+        OQL = "SELECT {} WHERE status IN ('assigned','pending','reassigned')".format(dataModel)
         fields = 'ref,project_team,deploy_windows,title'
         response = iconn.query_by_oql(dataModel,OQL,fields)
         resDict = json.loads(response)

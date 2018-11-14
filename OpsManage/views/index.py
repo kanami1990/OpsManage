@@ -13,6 +13,7 @@ from OpsManage.models import (Global_Config,Email_Config,Assets,
 from orders.models import Order_System
 from zabbix_api.models import Zabbix_Config
 from itop_api.models import ITOP_Config
+from deployconsole.models import Jenkins_Config
 from django.contrib.auth.decorators import permission_required
 
 @login_required(login_url='/login')
@@ -153,8 +154,12 @@ def config(request):
             itop = ITOP_Config.objects.get(id=1)
         except:
             itop = None
+        try:
+            jenkins = Jenkins_Config.objects.get(id=1)
+        except:
+            jenkins = None
         return render(request,'config.html',{"user":request.user,"config":config,
-                                                 "email":email,"zabbix":zabbix,"itop":itop})
+                                                 "email":email,"zabbix":zabbix,"itop":itop,"jenkins":jenkins})
     elif request.method == "POST":
         if request.POST.get('op') == "log":
             try:
@@ -251,6 +256,27 @@ def config(request):
             else:
                 ITOP_Config.objects.create(
                     site=request.POST.get('site'),
+                    host=request.POST.get('host', None),
+                    user=request.POST.get('user', None),
+                    passwd=request.POST.get('passwd', None),
+                )
+            return JsonResponse({'msg': '配置修改成功', "code": 200, 'data': []})
+        elif request.POST.get('op') == "jenkins":
+            try:
+                count = Jenkins_Config.objects.filter(id=1).count()
+            except:
+                count = 0
+            if count > 0:
+                Jenkins_Config.objects.filter(id=1).update(
+                    # site=request.POST.get('site'),
+                    host=request.POST.get('host', None),
+                    user=request.POST.get('user', None),
+                    passwd=request.POST.get('passwd', None),
+
+                )
+            else:
+                Jenkins_Config.objects.create(
+                    # site=request.POST.get('site'),
                     host=request.POST.get('host', None),
                     user=request.POST.get('user', None),
                     passwd=request.POST.get('passwd', None),

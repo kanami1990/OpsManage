@@ -75,3 +75,31 @@ class ItopSource(object):
         r = requests.post(self.itop_url, verify=False,
                           data={'auth_user': self.itop_user, 'auth_pwd': self.itop_pwd, 'json_data': json_str})
         return r.text
+
+    def pending_objects_by_requestid(self,dataModel, objDict, keyId):
+        baseDict = {}
+        baseDict['operation'] = "core/apply_stimulus"
+        baseDict['comment'] = "update {} by interface".format(dataModel)
+        baseDict['class'] = dataModel
+        baseDict['output_fields'] = "id"
+        baseDict['stimulus'] = "ev_pending"
+        baseDict['key'] = keyId
+        baseDict['fields'] = objDict
+        json_str = json.dumps(baseDict)
+        r = requests.post(self.itop_url, verify=False,
+                          data={'auth_user': self.itop_user, 'auth_pwd': self.itop_pwd, 'json_data': json_str})
+        return r.text
+
+    def close_object_by_requestid(self,dataModel,objDict,keyId):
+        baseDict = {}
+        baseDict['operation'] = "core/apply_stimulus"
+        baseDict['comment'] = "update {} by interface".format(dataModel)
+        baseDict['class'] = dataModel
+        baseDict['output_fields'] = "id"
+        baseDict['stimulus'] = "ev_close"
+        baseDict['key'] = keyId
+        baseDict['fields'] = objDict
+        json_str = json.dumps(baseDict)
+        r = requests.post(self.itop_url, verify=False,
+                          data={'auth_user': self.itop_user, 'auth_pwd': self.itop_pwd, 'json_data': json_str})
+        return r.text
