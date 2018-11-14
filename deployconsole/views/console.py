@@ -19,10 +19,11 @@ def deploy_console(request):
         response = iconn.query_by_oql(dataModel,OQL,fields)
         resDict = json.loads(response)
         dpyReqIdList = []
-        for key,value in resDict['objects'].items():
-            task = {}
-            task['key'] = value['key']
-            for item in fields.split(','):
-                task[item] = value['fields'][item]
-            dpyReqIdList.append(task)
+        if resDict['objects']:
+            for key,value in resDict['objects'].items():
+                task = {}
+                task['key'] = value['key']
+                for item in fields.split(','):
+                    task[item] = value['fields'][item]
+                dpyReqIdList.append(task)
         return render(request,'deployconsole/dpyconsole.html',{"dpyReqIdList":dpyReqIdList})
