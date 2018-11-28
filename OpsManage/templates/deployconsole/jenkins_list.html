@@ -1,0 +1,298 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+    <!-- bootstrap-notify -->
+    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+    {#<script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>#}
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa fa-user"></i> Jenkins 源 列表</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="btn-group btn-group-xs pull-right">
+                            <button type="button" class="btn btn-default"><a href="#" data-toggle="modal"
+                                                                             data-target="#addJenkinsModal"><i
+                                    class="fa fa-pencil fa-fw"></i>添加记录</a></button>
+                            {#							    	<button type="button" class="btn btn-default" onclick="fcDumpsAssetsData(this)"><i class="fa fa-refresh fa-fw"></i>导出资产</button>#}
+                            {#								    <button type="button" class="btn btn-default" onclick="undefindfunc(this,'update')"><i class="fa fa-refresh fa-fw"></i>未定义功能</button>#}
+                            {#								    <button type="button" class="btn btn-default" onclick="updateAllAssets(this,'delete')"><i class="fa fa-trash-o fa-fw"></i>批量删除</button>#}
+                        </div>
+                        <i class="fa  fa-github-alt  "></i> Jenkins 源维护
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        {#                        	<div>#}
+                        {#                        		<button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#myProjectModal"><i class="glyphicon glyphicon-plus"></i></button>#}
+                        {#                        	</div>#}
+                        <table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer"
+                               id="jenkinsList">
+                            <thead>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">标签</th>
+                                <th class="text-center">服务地址</th>
+                                <th class="text-center">用户</th>
+                                {#                                            <th class="text-center">密码</th>#}
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for ds in jenkinslist %}
+                                <tr>
+                                    <td>{{ ds.id }}</td>
+                                    <td>{{ ds.tag }}</td>
+                                    <td>{{ ds.host }}</td>
+                                    <td>{{ ds.user }}</td>
+                                    {#	                                            <td>{{ds.passwd}}</td>#}
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-xs btn-default" data-toggle="modal"
+                                                data-target="#modfJenkinsModal-{{ ds.id }}"><abbr title="编辑"><i
+                                                class="glyphicon glyphicon-edit"></i></abbr></button>
+                                        <button type="button" class="btn btn-xs btn-default"
+                                                onclick="delJenkinsSource(this,{{ ds.id }})"><abbr title="删除"><i
+                                                class="glyphicon glyphicon-trash"></i></abbr></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+
+        {% for ds in jenkinslist %}
+            <div class="modal fade" id="modfJenkinsModal-{{ ds.id }}" tabindex="-1" role="dialog"
+                 aria-labelledby="modfJenkinsModalLabel-{{ ds.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            </button>
+                            <h4 class="modal-title" id="modfJenkinsModalLabel-{{ ds.id }}">
+                                Jenkins信息
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form" id="jenkins_{{ ds.id }}">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right"
+                                           for="form-field-4"><strong>标签</strong></label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control" type="text" name="tag"
+                                               value="{{ ds.tag|default:"" }}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right"
+                                           for="form-field-4"><strong>服务地址</strong></label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control" type="text" name="host"
+                                               value="{{ ds.host|default:"" }}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right"
+                                           for="form-field-4"><strong>用户名</strong></label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control" type="text" name="user"
+                                               value="{{ ds.user|default:"" }}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right"
+                                           for="form-field-4"><strong>密码</strong></label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control" type="password" name="passwd"
+                                               value="{{ ds.passwd|default:"" }}"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="modfJenkinsData(this,{{ ds.id }})">
+                                修改
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+        {% endfor %}
+
+    </div>
+    <div class="modal fade" id="addJenkinsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">添加新Jenkins记录</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="jenkins_new">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>标签</strong></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" name="tag"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>服务地址</strong></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" name="host"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>用户名</strong></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" name="user"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>密码</strong></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="password" name="passwd"/>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary" onclick="addJenkins(this)">新增</button>
+                    </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        function modfJenkinsData(obj, id) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var post_data = {};
+
+            {#var putUrl = '/dns/zone/'+id+'/';#}
+            var form = document.getElementById('jenkins_' + id);
+
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                if (value.length === 0) {
+                    post_data[name] = undefined
+                }
+                else {
+                    post_data[name] = value
+                }
+            }
+            {#alert(JSON.stringify(post_data))#}
+            putUrl = '/dpyconsole/jenkins_list/' + id + '/';
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "PUT",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("Jenkins配置成功", window.wxc.xcConfirm.typeEnum.success);
+                    location.reload();
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("Jenkins配置失败", window.wxc.xcConfirm.typeEnum.error);
+                    /* 	    		location.reload(); */
+                }
+            })
+        }
+
+        function delJenkinsSource(obj, id) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var txt = "是否确认删除？";
+            var post_data = {};
+            var putUrl = '/dpyconsole/jenkins_list/' + id + '/';
+            var option = {
+                title: "id-" + id,
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: putUrl,
+                        success: function (response) {
+                            btnObj.removeAttr('disabled');
+                            window.wxc.xcConfirm("删除成功！", window.wxc.xcConfirm.typeEnum.success);
+                            location.reload();
+                        },
+                        error: function (response) {
+                            btnObj.removeAttr('disabled');
+                            window.wxc.xcConfirm("删除失败！", window.wxc.xcConfirm.typeEnum.error);
+                        }
+                    });
+                },
+                onCancel: function () {
+                },
+                onClose: function () {
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+
+        function addJenkins(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var post_data = {};
+
+            var form = document.getElementById('jenkins_new');
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                if (value.length === 0) {
+                    post_data[name] = undefined
+                }
+                else {
+                    post_data[name] = value
+                }
+            }
+            alert(JSON.stringify(post_data));
+            putUrl = '/dpyconsole/add_jenkins/';
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("Jenkins配置成功", window.wxc.xcConfirm.typeEnum.success);
+                    location.reload();
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("Jenkins配置失败", window.wxc.xcConfirm.typeEnum.error);
+                    /* 	    		location.reload(); */
+                }
+            })
+            btnObj.removeAttr('disabled')
+        }
+    </script>
+{% endblock %}

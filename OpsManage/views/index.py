@@ -154,12 +154,12 @@ def config(request):
             itop = ITOP_Config.objects.get(id=1)
         except:
             itop = None
-        try:
-            jenkins = Jenkins_Config.objects.get(id=1)
-        except:
-            jenkins = None
+        # try:
+        #     jenkins = Jenkins_Config.objects.get(id=1)
+        # except:
+        #     jenkins = None
         return render(request,'config.html',{"user":request.user,"config":config,
-                                                 "email":email,"zabbix":zabbix,"itop":itop,"jenkins":jenkins})
+                                                 "email":email,"zabbix":zabbix,"itop":itop})
     elif request.method == "POST":
         if request.POST.get('op') == "log":
             try:
@@ -261,25 +261,25 @@ def config(request):
                     passwd=request.POST.get('passwd', None),
                 )
             return JsonResponse({'msg': '配置修改成功', "code": 200, 'data': []})
-        elif request.POST.get('op') == "jenkins":
-            try:
-                count = Jenkins_Config.objects.filter(id=1).count()
-            except:
-                count = 0
-            if count > 0:
-                Jenkins_Config.objects.filter(id=1).update(
-                    # site=request.POST.get('site'),
-                    host=request.POST.get('host', None),
-                    user=request.POST.get('user', None),
-                    passwd=request.POST.get('passwd', None),
-
-                )
-            else:
-                Jenkins_Config.objects.create(
-                    # site=request.POST.get('site'),
-                    host=request.POST.get('host', None),
-                    user=request.POST.get('user', None),
-                    passwd=request.POST.get('passwd', None),
-                )
-            return JsonResponse({'msg': '配置修改成功', "code": 200, 'data': []})
-        
+        # elif request.POST.get('op') == "jenkins":
+        #     try:
+        #         count = Jenkins_Config.objects.filter(id=1).count()
+        #     except:
+        #         count = 0
+        #     if count > 0:
+        #         Jenkins_Config.objects.filter(id=1).update(
+        #             # site=request.POST.get('site'),
+        #             host=request.POST.get('host', None),
+        #             user=request.POST.get('user', None),
+        #             passwd=request.POST.get('passwd', None),
+        #
+        #         )
+        #     else:
+        #         Jenkins_Config.objects.create(
+        #             # site=request.POST.get('site'),
+        #             host=request.POST.get('host', None),
+        #             user=request.POST.get('user', None),
+        #             passwd=request.POST.get('passwd', None),
+        #         )
+        #     return JsonResponse({'msg': '配置修改成功', "code": 200, 'data': []})
+        #

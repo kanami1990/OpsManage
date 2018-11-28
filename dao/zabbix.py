@@ -27,6 +27,13 @@ class ZabbixSource(object):
                 zabbix = None
         super(ZabbixSource,self).__init__()
 
+    def reSyncToken(self):
+        zabbix = Zabbix_Config.objects.get(id=1)
+        self.zabbixapi = '{}/api_jsonrpc.php'.format(zabbix.host)
+        self.zabbixuser = zabbix.user
+        self.zabbixpwd = zabbix.passwd
+        self.token = self.getToken()
+
     def getToken(self):
         headers = {'content-type': 'application/json'}
         d1 = {}
@@ -70,13 +77,20 @@ class ZabbixSource(object):
         subject = ''
         message = ''
         sendtolist = []
-        for item in r.json()['result']:
-            if item['sendto']:
-                # sendtolist.append(item['sendto'])
-                sendtolist.extend(item['sendto'].split(','))
-                subject = item['subject']
-                message = item['message']
-        return(','.join(sendtolist),subject,message)
+        # if not r.json()['error']['code'] == -32602 :
+        try:
+            for item in r.json()['result']:
+                if item['sendto']:
+                    # sendtolist.append(item['sendto'])
+                    sendtolist.extend(item['sendto'].split(','))
+                    subject = item['subject']
+                    message = item['message']
+            return(','.join(sendtolist),subject,message)
+        except:
+            if 'login' in r.json()['error']['code']:
+                self.reSyncToken()
+                self.queryAlertsbyEventid()
+
 
     def queryLogbyEventid(self,eventId):
         za_cnt = ZabbixAlert.objects.filter(event_id=eventId).count()
@@ -88,6 +102,63 @@ class ZabbixSource(object):
     def addLog(self,event,subject,send_to,message,send_flag):
         log = ZabbixAlert.objects.create(event_id=event,subject=subject,send_to=send_to,message=message,send_flag=send_flag)
         return log
+
+    def queryDisabledUserGroupId(self):
+        headers = {'content-type': 'application/json'}
+        d1 = {}
+        d1['jsonrpc'] = '2.0'
+        d1['method'] = 'usergroup.get'
+        d2 = {}
+        d2['output'] = 'extend'
+        # d3 = {}
+        # d3['name'] = 'Disabled'
+        # d1['search'] = d3
+        d1['params'] = d2
+        d1['id'] = int(self.zabbixuid)
+        d1['auth'] = self.token
+        payload = json.dumps(d1)
+        r = requests.post(self.zabbixapi, data=payload, headers=headers)
+        print json.dumps(r.json(),ensure_ascii=False)
+        gid = ''
+        try:
+            for item in r.json()['result']:
+                if item['name'] == 'Disabled':
+                    gid = item['usrgrpid']
+            return gid
+        except:
+            if 'login' in r.json()['error']['code']:
+                self.reSyncToken()
+                self.queryDisabledUserGroupId()
+
+    def addUser(self,username):
+        headers = {'content-type': 'application/json'}
+        d1 = {}
+        d1['jsonrpc'] = '2.0'
+        d1['method'] = 'user.create'
+        d2 = {}
+        d2['alias'] = username
+        d2['passwd'] = '111111'
+        d3 = {}
+        d3['usrgrpid'] = self.queryDisabledUserGroupId()
+        # d3['usrgrpid'] = '9'
+        d2['usrgrps'] = [d3]
+        d1['params'] = d2
+        d1['id'] = int(self.zabbixuid)
+        d1['auth'] = self.token
+        payload = json.dumps(d1)
+        print payload
+        r = requests.post(self.zabbixapi, data=payload, headers=headers)
+        print json.dumps(r.json(),ensure_ascii=False)
+        try:
+            if r.json()['result']['userids'][0]:
+                return True
+            else:
+                return False
+        except:
+            if 'login' in r.json()['error']['code']:
+                self.reSyncToken()
+                self.addUser(username)
+
 
 
 

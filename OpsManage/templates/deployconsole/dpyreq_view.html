@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% block ace-content %}
     <!-- bootstrap-notify -->
-        <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
     {#    <script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>#}
 {% endblock %}
 {% block page-content %}
@@ -127,10 +127,16 @@
                     <div class="panel-body">
                         <div class="container">
                             <div class="col-lg-4">
-                                {% if dpyRequest.status == "assigned" or dpyRequest.status == "reassigned"%}
-                                    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="takeReq(this)">接单</button>
+                                {% if dpyRequest.status == "assigned" or dpyRequest.status == "reassigned" %}
+{#                                    <button type="button" class="btn btn-primary btn-lg btn-block"#}
+{#                                            onclick="takeReq(this)">接单#}
+{#                                    </button>#}
+                                    <button type="button" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+                                            data-target="#decideJenkins">接单2</button>
                                 {% elif  dpyRequest.status == "pending" %}
-                                    <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="closeReq(this)">关单</button>
+                                    <button type="button" class="btn btn-secondary btn-lg btn-block"
+                                            onclick="closeReq(this)">关单
+                                    </button>
                                 {% endif %}
                             </div>
                         </div>
@@ -158,6 +164,15 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
+                        <div class="pull-right">
+{#                                    <select class="form-control" name="jenkins_option" id="jenkins_id" required>#}
+{#                                        {% for ds in jenkinsList %}#}
+{#                                            <option name="group" value="{{ ds.id }}">{{ ds.tag }}</option>#}
+{#                                        {% endfor %}#}
+{#                                    </select>#}
+                            <div id="jenkinsSource">Jenkins 源: {{ jenkinsSource }}</div>
+                            <div id="jkvalue" style="display:none">{{ jkvalue }}</div>
+                            </div>
                         <i class="fa fa-institution    fa-fw"></i> 投产任务
                     </div>
                     <div class="panel-body">
@@ -196,9 +211,9 @@
                                                     <td class="text-center">{{ entry.jk_revno }} </td>
                                                     <td class="text-center">{{ entry.jk_sysmod_id_friendlyname }} </td>
                                                     <td class="text-center">
-                                                        {% if entry.status == "closed" and entry.dpy_time == undefined%}
+                                                        {% if entry.status == "closed" and entry.dpy_time == undefined %}
                                                             可投产
-                                                        {% elif entry.status == "closed" and entry.dpy_time != undefined%}
+                                                        {% elif entry.status == "closed" and entry.dpy_time != undefined %}
                                                             已投产
                                                         {% else %}
                                                             不可投产
@@ -209,17 +224,32 @@
                                                     <td class="text-center">{{ entry.dpy_cnt }}</td>
                                                     <td class="text-center">
                                                         {% if dpyRequest.status == "pending" and entry.status == "closed" and entry.dpy_time == undefined %}
-                                                            <button  type="button" class="btn btn-xs btn-default" onclick="doTask(this,'{{ entry.jk_appname }}','{{ entry.jk_dpno }}')"><i class="glyphicon glyphicon-play"></i></button>
+                                                            <button type="button" class="btn btn-xs btn-default"
+                                                                    onclick="doTask(this,'{{ entry.jk_appname }}','{{ entry.jk_dpno }}')">
+                                                                <i class="glyphicon glyphicon-play"></i></button>
+                                                            <button type="button" class="btn btn-xs btn-default" onclick="modTask(this,'{{ entry.jk_appname }}','{{ entry.jk_revno }}')"><i class="glyphicon glyphicon-edit"></i>
+                                                            </button>
                                                         {% elif dpyRequest.status == "pending" and entry.status == "closed" and entry.dpy_time != undefined %}
-                                                            <button  type="button" class="btn btn-xs btn-default" onclick="doTask(this,'{{ entry.jk_appname }}','{{ entry.jk_dpno }}')"><i class="glyphicon glyphicon-play"></i></button>
-                                                            <a href="/dpyconsole/taskoutput/{{ entry.jk_appname }}/{{ entry.dpy_cnt }}/" target="_blank" style="text-decoration:none;">
-                                                            <button type="button" class="btn btn-xs btn-default"><abbr title="查看详细信息"><i
-                                                                class="glyphicon glyphicon-print"></i></abbr></button>
+                                                            <button type="button" class="btn btn-xs btn-default"
+                                                                    onclick="doTask(this,'{{ entry.jk_appname }}','{{ entry.jk_dpno }}')">
+                                                                <i class="glyphicon glyphicon-play"></i></button>
+                                                            <a href="/dpyconsole/taskoutput/{{ jkvalue }}/{{ entry.jk_appname }}/{{ entry.dpy_cnt }}/"
+                                                               target="_blank" style="text-decoration:none;">
+                                                                <button type="button" class="btn btn-xs btn-default">
+                                                                    <abbr title="查看详细信息"><i
+                                                                            class="glyphicon glyphicon-print"></i></abbr>
+                                                                </button>
                                                             </a>
 
                                                         {% else %}
-                                                            <button  type="button" class="btn btn-xs btn-default" disabled><i class="glyphicon glyphicon-play"></i></button>
+                                                            <button type="button" class="btn btn-xs btn-default"
+                                                                    disabled><i class="glyphicon glyphicon-play"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-xs btn-default"
+                                                                    disabled><i class="glyphicon glyphicon-edit"></i>
+                                                            </button>
                                                         {% endif %}
+
                                                     </td>
                                                 </tr>
                                             {% endfor %}
@@ -277,32 +307,68 @@
         </div>
     </div>
 
-    <div class="modal fade" id="jenkinsoutputModal" tabindex="-1" role="dialog" aria-labelledby="jenkinsoutputLabel" aria-hidden="true">
-				<div class="modal-dialog" style="width:1280px;height:auto;">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal"
-									aria-hidden="true">×
-							</button>
-							<h4 class="modal-title" id="jenkinsoutputlLabel">
-								执行结果
-							</h4>
-						</div>
-						<div class="modal-body">
+    <div class="modal fade" id="jenkinsoutputModal" tabindex="-1" role="dialog" aria-labelledby="jenkinsoutputLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width:1280px;height:auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title" id="jenkinsoutputlLabel">
+                        执行结果
+                    </h4>
+                </div>
+                <div class="modal-body">
 							<pre>
 								<div id="jenkins_output_result">
 								</div>
 							</pre>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default"
-									data-dismiss="modal">关闭
-							</button>
-						</div>
-					</div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div><!-- /.modal -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
+    <div class="modal fade" id="decideJenkins" tabindex="-1" role="dialog" aria-labelledby="decideJenkinsLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				</button>
+				<h4 class="modal-title" id="decideJenkinsLabel">
+					确认Jenkins源
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form" id="jenkins_select">
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>选择Jenkins源</strong></label>
+						<div class="col-sm-6">
+						   <select class="form-control" name="jenkins_id" id="jenkins_id">
+						   		<option  value="">请此任务的Jenkins源</option>
+									{% for s in jenkinsList %}
+										<option value="{{s.id}}" name="jenkins_id">{{s.tag}}</option>
+									{% endfor %}
+							</select>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				</button>
+				<button type="button" class="btn btn-primary" onclick="takeReq(this)">
+					确认
+				</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -312,85 +378,90 @@
             $('#DbList').DataTable();
         });
 
-        function doTask(obj,taskname,dpno){
+        function doTask(obj, taskname, dpno) {
             var btnObj = $(obj);
             var url = window.location.href;
             var parameter = url.split('/');
             var rid = parameter[parameter.length - 2];
+            var jid = document.getElementById('jkvalue')
             var post_data = {};
             post_data['dpy_id'] = rid;
             post_data['dpy_jk_appname'] = taskname;
             post_data['dpy_no'] = dpno;
+            post_data['jid'] = jid.innerText
             btnObj.attr('disabled', true);
             $.ajax({
-                url:'/dpyconsole/do_task/',
-                type:'POST',
-                data:post_data,
+                url: '/dpyconsole/do_task/',
+                type: 'POST',
+                data: post_data,
                 success: function (response) {
                     $.notify({
-                                    title: "<strong>Jenkins：</strong>",
-                                    message: response.rtnMsg
-                                },
-                                {
-                                    type: 'info'
-                                });
+                            title: "<strong>Jenkins：</strong>",
+                            message: response.rtnMsg
+                        },
+                        {
+                            type: 'info'
+                        });
                     location.reload();
                 },
                 error: function (response) {
                     {#alert(JSON.stringify(response))#}
                     $.notify({
-                                    title: "<strong>Jenkins：</strong>",
-                                    {#message: '任务执行失败！'#}
-                                    message: response.responseJSON.rtnMsg
-                                },
-                                {
-                                    type: 'danger'
-                                });
+                            title: "<strong>Jenkins：</strong>",
+                            {#message: '任务执行失败！'#}
+                            message: response.responseJSON.rtnMsg
+                        },
+                        {
+                            type: 'danger'
+                        });
                     btnObj.removeAttr('disabled');
                 }
             })
 
         }
 
-        function takeReq(obj){
+        function takeReq(obj) {
             var btnObj = $(obj);
             var url = window.location.href;
             var parameter = url.split('/');
-            var rid = parameter[parameter.length - 2]
-            var post_data = {}
-            post_data['rid'] = rid
+            var rid = parameter[parameter.length - 2];
+            var jid = document.getElementById('jenkins_id');
+            var post_data = {};
+            post_data['rid'] = rid;
+            post_data['jid'] = jid.options[jid.selectedIndex].value;
+            {#alert(JSON.stringify(post_data))#}
             btnObj.attr('disabled', true);
-             $.ajax({
+            $.ajax({
                 {#dataType: "JSON",#}
                 url: '/dpyconsole/take_req/', //请求地址
                 type: "POST",  //提交类似
                 data: post_data, //提交参数
                 success: function (response) {
                     $.notify({
-                                    title: "<strong>iTop：</strong>",
-                                    message: '接单成功！'
-                                },
-                                {
-                                    type: 'info'
-                                });
+                            title: "<strong>iTop：</strong>",
+                            message: response.rtnMsg
+                        },
+                        {
+                            type: 'info'
+                        });
                     location.reload();
                 },
                 error: function (response) {
                     $.notify({
-                                    title: "<strong>iTop：</strong>",
-                                    message: '接单失敗！'
-                                },
-                                {
-                                    type: 'danger'
-                                });
+                            title: "<strong>iTop：</strong>",
+                            message: response.responseJSON.rtnMsg
+                        },
+                        {
+                            type: 'danger'
+                        });
                     btnObj.removeAttr('disabled');
-                    {#window.wxc.xcConfirm("资产记录失败", window.wxc.xcConfirm.typeEnum.error);#}
+                    window.wxc.xcConfirm("资产记录失败", window.wxc.xcConfirm.typeEnum.error);
                     /* 	    		location.reload(); */
                 }
             })
         }
 
-        function closeReq(obj){
+        function closeReq(obj) {
             var btnObj = $(obj);
             var url = window.location.href;
             var parameter = url.split('/');
@@ -398,29 +469,29 @@
             var post_data = {};
             post_data['rid'] = rid;
             btnObj.attr('disabled', true);
-             $.ajax({
+            $.ajax({
                 {#dataType: "JSON",#}
                 url: '/dpyconsole/close_req/', //请求地址
                 type: "POST",  //提交类似
                 data: post_data, //提交参数
                 success: function (response) {
                     $.notify({
-                                    title: "<strong>iTop：</strong>",
-                                    message: '关单成功！'
-                                },
-                                {
-                                    type: 'info'
-                                });
+                            title: "<strong>iTop：</strong>",
+                            message: '关单成功！'
+                        },
+                        {
+                            type: 'info'
+                        });
                     location.reload();
                 },
                 error: function (response) {
                     $.notify({
-                                    title: "<strong>iTop：</strong>",
-                                    message: '关单失敗！'
-                                },
-                                {
-                                    type: 'danger'
-                                });
+                            title: "<strong>iTop：</strong>",
+                            message: '关单失敗！'
+                        },
+                        {
+                            type: 'danger'
+                        });
                     btnObj.removeAttr('disabled');
                     {#window.wxc.xcConfirm("资产记录失败", window.wxc.xcConfirm.typeEnum.error);#}
                     /* 	    		location.reload(); */
@@ -428,6 +499,41 @@
             })
         }
 
+        function modTask(obj,taskname,revno) {
+            var btnObj = $(obj);
+            var jid = document.getElementById('jkvalue');
+            var post_data = {};
+            post_data['taskname'] = taskname;
+            post_data['revno'] = revno;
+            post_data['jid'] = jid.innerHTML;
+            {#alert(JSON.stringify(post_data));#}
+            btnObj.attr('disabled', true);
+            $.ajax({
+                url: '/dpyconsole/mod_jktask/', //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    $.notify({
+                            title: "<strong>Jenkins：</strong>",
+                            message: '修改成功！'
+                        },
+                        {
+                            type: 'info'
+                        });
+                    {#location.reload();#}
+                },
+                error: function (response) {
+                    $.notify({
+                            title: "<strong>Jenkins：</strong>",
+                            message: '修改失敗！'
+                        },
+                        {
+                            type: 'danger'
+                        });
+                    {#btnObj.removeAttr('disabled');#}
+                }
 
+            })
+        }
     </script>
 {% endblock %}

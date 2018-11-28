@@ -23,8 +23,8 @@
 				              </li>
                                <li><a href="#itop" data-toggle="tab"><i class="fa fa-dashboard"></i> iTop配置</a>
 				              </li>
-                               <li><a href="#jenkins" data-toggle="tab"><i class="fa fa-dashboard"></i> Jenkins配置</a>
-				              </li>
+{#                               <li><a href="#jenkins" data-toggle="tab"><i class="fa fa-dashboard"></i> Jenkins配置</a>#}
+{#				              </li>#}
 				           </ul>
 				
 				                            
@@ -365,58 +365,49 @@
 										</div>
 				                   </div>
 				              </div>
-                               <div class="tab-pane fade" id="jenkins">
-				                   <div class="row">
-				                   		<div class="col-lg-12">
-				                   			<br>
-											<form role="form" method="post" id="addJenkins" class="main form-horizontal" >{% csrf_token %}
-
+{#                               <div class="tab-pane fade" id="jenkins">#}
+{#				                   <div class="row">#}
+{#				                   		<div class="col-lg-12">#}
+{#				                   			<br>#}
+{#											<form role="form" method="post" id="addJenkins" class="main form-horizontal" >{% csrf_token %}#}
 {#												<div class="form-group" >#}
-{#													 <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>#}
+{#													 <label class="col-sm-2 control-label"><i class="fa fa-user"></i> Jenkins服务器地址</label>#}
 {#													 <div class="col-sm-6">#}
-{#													 	<input class="form-control" type="text" value="{{itop.site}}" placeholder="http://192.168.1.233" name="site" />#}
+{#													 	<input class="form-control" type="text" value="{{jenkins.host}}" placeholder="http://172.21.14.23/itop/" name="host" />#}
 {#													 </div>#}
 {#												</div>#}
-
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-user"></i> Jenkins服务器地址</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{jenkins.host}}" placeholder="http://172.21.14.23/itop/" name="host" />
-													 </div>
-												</div>
-
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i> Jenkins账户</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{jenkins.user}}" placeholder="Admin" name="user" />
-													 </div>
-												</div>
-
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> Jenkins密码</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="password" id="form-field-3" value="{{jenkins.passwd}}" placeholder="3edcvfr4" name="passwd" />
-													 </div>
-												</div>
-
-												<div class="hr hr32 hr-dotted"></div>
-												<div class="form-group">
-													<div class="col-md-offset-3 col-md-9">
-														<button class="btn btn-default" type="buttun" onclick="addJenkinsData(this)">
-															<i class="fa fa-check"></i>
-																			提交
-														</button>
-																		&nbsp; &nbsp; &nbsp;
-														<button class="btn btn-default" type="reset">
-															<i class="fa fa-undo"></i>
-																			撤销
-														</button>
-													</div>
-												</div>
-												</form>
-										</div>
-				                   </div>
-				              </div>
+{#												<div class="form-group" >#}
+{#													 <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i> Jenkins账户</label>#}
+{#													 <div class="col-sm-6">#}
+{#													 	<input class="form-control" type="text" value="{{jenkins.user}}" placeholder="Admin" name="user" />#}
+{#													 </div>#}
+{#												</div>#}
+{##}
+{#												<div class="form-group" >#}
+{#													 <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> Jenkins密码</label>#}
+{#													 <div class="col-sm-6">#}
+{#													 	<input class="form-control" type="password" id="form-field-3" value="{{jenkins.passwd}}" placeholder="3edcvfr4" name="passwd" />#}
+{#													 </div>#}
+{#												</div>#}
+{##}
+{#												<div class="hr hr32 hr-dotted"></div>#}
+{#												<div class="form-group">#}
+{#													<div class="col-md-offset-3 col-md-9">#}
+{#														<button class="btn btn-default" type="buttun" onclick="addJenkinsData(this)">#}
+{#															<i class="fa fa-check"></i>#}
+{#																			提交#}
+{#														</button>#}
+{#																		&nbsp; &nbsp; &nbsp;#}
+{#														<button class="btn btn-default" type="reset">#}
+{#															<i class="fa fa-undo"></i>#}
+{#																			撤销#}
+{#														</button>#}
+{#													</div>#}
+{#												</div>#}
+{#												</form>#}
+{#										</div>#}
+{#				                   </div>#}
+{#				              </div>#}
 				           </div>
 
 

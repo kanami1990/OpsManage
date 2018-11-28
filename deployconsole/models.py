@@ -25,12 +25,15 @@ class dpy_log(models.Model):
         verbose_name_plural = '投产记录表'
 
 class Jenkins_Config(models.Model):
-    # site = models.CharField(max_length=100,verbose_name='部署站点')
+    tag = models.CharField(max_length=100,verbose_name='jenkins标签')
     host = models.CharField(max_length=100,verbose_name='jenkins服务器')
-    # port = models.SmallIntegerField(verbose_name='zabbixapi服务器端口')
     user = models.CharField(max_length=100,verbose_name='jenkins用户账户')
     passwd = models.CharField(max_length=100,verbose_name='jenkins用户密码')
-    # userid = models.SmallIntegerField(null=True, verbose_name='认证用户id')
-    # token = models.CharField(null=True,max_length=50, verbose_name='认证用户token')
     class Meta:
         db_table = 'opsmanage_jenkins_config'
+
+class task_jk(models.Model):
+    rid = models.SmallIntegerField(null=False,verbose_name='任务id')
+    jid = models.SmallIntegerField(null=False,verbose_name='jenkinsid')
+    class Meta:
+        db_table = 'opsmanage_task_jk'
