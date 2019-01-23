@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view
 from django.db.models import Q
 import operator
 from logmonitor.models import (LogSignup)
-from OpsManage.models import Assets
+from OpsManage.models import Assets,Server_Assets
 
 # Create your views here.
 @login_required()
@@ -24,8 +24,9 @@ def log_signup(request):
         gids = request.user.groups.values_list('id',flat=True)
         query = reduce(operator.and_, (Q(log_groups__contains = g_name) for g_name in request.user.groups.values_list('name',flat=True)))
         loglist = LogSignup.objects.filter(query)
-        # loglist = LogSignup.objects.filter(log_userid=userid)
-        serverList = Assets.objects.filter(assets_type='server',status=0,group__in=gids)
+        assetsList = Assets.objects.filter(assets_type='server',status=0,group__in=gids)
+        serverList = [{'management_ip': a.server_assets.ip} for a in assetsList]
+        print serverList
         return render(request,'logmonitor/loglist.html',{'loglist':loglist, 'userid':userid, 'groups':groups,'serverList':serverList})
 
 def log_search(request):
