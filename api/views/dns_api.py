@@ -9,7 +9,7 @@ from dnsc.models import *
 import dns.resolver,dns.zone,dns.tsigkeyring,dns.update
 
 @api_view(['POST' ])
-@permission_required('dns.can_change_dns_zone',raise_exception=True)
+@permission_required('dnsc.can_change_dns_zone',raise_exception=True)
 def update_rr(request):
     if request.method == 'POST':
         if request.data['zid']:
@@ -30,7 +30,7 @@ def update_rr(request):
         return Response(status=status.HTTP_200_OK)
 
 @api_view(['POST' ])
-@permission_required('dns.can_delete_dns_zone',raise_exception=True)
+@permission_required('dnsc.can_delete_dns_zone',raise_exception=True)
 def del_record(request):
     if request.method == 'POST':
         if request.data['zid']:
@@ -46,7 +46,7 @@ def del_record(request):
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['POST' ])
-@permission_required('dns.can_add_dns_zone',raise_exception=True)
+@permission_required('dnsc.can_add_dns_zone',raise_exception=True)
 def add_record(request):
     if request.method == 'POST':
         if request.data['zid']:

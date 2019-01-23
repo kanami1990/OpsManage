@@ -1,0 +1,346 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+<!-- bootstrap-notify -->
+<link href="/static/dist/css/bootstrap-multiselect.css" rel="stylesheet">
+<script src="/static/dist/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+<style type="text/css">
+  .dropdown-menu {
+		max-height: 500px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+</style>
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa fa-user"></i> 日志控制台</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="btn-group btn-group-xs pull-right">
+                            <button type="button" class="btn btn-default"><a href="#" data-toggle="modal"
+                                                                             data-target="#myLogModal"><i
+                                    class="fa fa-refresh fa-fw"></i>登录新日志路径</a></button>
+                        </div>
+                        <i class="fa  fa-github-alt  "></i> 日志列表
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer"
+                               id="taskTableList">
+                            <thead>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">日志标签</th>
+                                <th class="text-center">系统标签</th>
+                                <th class="text-center">服务器</th>
+                                <th class="text-center">路径</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">日志标签</th>
+                                <th class="text-center">系统标签</th>
+                                <th class="text-center">服务器</th>
+                                <th class="text-center">路径</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </tfoot>
+                            <tbody>
+                            {% for ds in loglist %}
+                                <tr>
+                                    <td class="text-center">
+                                        {{ ds.id }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.log_tag }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.log_systag }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.log_ip }}
+                                    </td>
+                                    <td class="text-left">
+                                        {{ ds.log_path }}
+                                    </td>
+                                    <td class="text-center">
+                                        <div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-default" data-toggle="modal"
+                                                        data-target="#myLogEditModal-{{ ds.id }}">
+                                                    <abbr title="編輯"><i class="fa fa-edit"></i></abbr>
+                                                </button>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-default"
+                                                        onclick="delLog(this,'{{ ds.log_ip }}-{{ ds.log_tag }}',{{ ds.id }})">
+                                                    <abbr title="删除"><i class="fa fa-trash"></i></abbr>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+
+    </div>
+    <div class="modal fade" id="myLogModal" tabindex="-1" role="dialog" aria-labelledby="myLogModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myLogModalLabel">
+                        登录Log配置
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" method="post" id="addSql" class="main form-horizontal">{% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> 日志标签</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="log_tag"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> 系统标签</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="log_systag"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> 服务器</label>
+                            <div class="col-sm-6">
+                                <select multiple name="log_ip[]" id="log_ip" required searchable="'123">
+                                    {% for ds in serverList %}
+                                        <option name="server" value="{{ ds.management_ip }}">{{ ds.management_ip }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-gears"></i> 路径</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="log_path"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addLog(this, '{{ groups }}')">
+                        添加
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    {% for ds in loglist %}
+        <div class="modal fade" id="myLogEditModal-{{ ds.id }}" tabindex="-1" role="dialog"
+             aria-labelledby="myLogEditModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="mySQLEditModalLabel">
+                            修改Log配置
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" method="post" id="editLog-{{ ds.id }}"
+                              class="main form-horizontal">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> 日志标签</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="text" value="{{ ds.log_tag|default:"" }}"
+                                           placeholder="不能为空" name="log_tag"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> 系统标签</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="text" value="{{ ds.log_systag|default:"" }}"
+                                           placeholder="不能为空" name="log_systag"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> 服务器</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="text" value="{{ ds.log_ip }}"
+                                            name="log_ip" readonly/>
+                                </div>
+                            </div>
+                            <input class="form-control" type="hidden" value="mysql" name="log_path"/>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><i class="fa fa-gears"></i> 路径</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="text" value="{{ ds.log_path|default:"" }}"
+                                           placeholder="不能为空" name="log_path"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="editLog(this, {{ ds.id }})">
+                            修改
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    {% endfor %}
+    <script type="text/javascript">
+
+    $(document).ready(function() {
+    $('#log_ip').multiselect({
+        enableClickableOptGroups: true,
+        enableCollapsibleOptGroups: true,
+        includeSelectAllOption: true,
+       	enableFiltering: true,
+    });
+});
+
+        function addLog(obj, groups) {
+            var btnObj = $(obj);
+            var required = ["log_ip", "log_tag", "log_path", "log_systag"];
+            btnObj.attr('disabled', true);
+            var form = document.getElementById('addSql');
+            var post_data = {};
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+                ;
+            }
+            ;
+            var x = $('#log_ip').val()
+            post_data['log_ip'] = x
+            post_data["log_userid"] = {{ userid }}
+            post_data["log_groups"] = groups
+            $.ajax({
+                dataType: "JSON",
+                url: '/logmon/add/', //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("日志添加成功", window.wxc.xcConfirm.typeEnum.success);
+                    location.reload();
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm(response.responseJSON.msg, window.wxc.xcConfirm.typeEnum.error);
+                    /* 	    		location.reload(); */
+                }
+            })
+        }
+
+        function editLog(obj, id) {
+            var btnObj = $(obj);
+            var required = ["log_tag", "log_systag", "log_path", "log_ip"];
+            btnObj.attr('disabled', true);
+            var form = document.getElementById('editLog-' + id);
+            var post_data = {};
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+                ;
+            }
+            ;
+            post_data["log_userid"] = {{ userid }}
+            post_data["log_groups"] = '{{ groups }}'
+            $.ajax({
+                dataType: "JSON",
+                url: '/logmon/edit/' + id + '/', //请求地址
+                type: "PUT",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("数据库修改成功", window.wxc.xcConfirm.typeEnum.success);
+                    location.reload();
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm(JSON.stringify(response.responseJSON.msg), window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
+
+        function delLog(obj, name, id) {
+            var btnObj = $(obj);
+            var txt = "是否确认删除？";
+            var option = {
+                title: "删除数据(" + name + ")配置",
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '/logmon/edit/' + id + '/',
+                        success: function (response) {
+                            btnObj.removeAttr('disabled');
+                            window.wxc.xcConfirm("数据库删除成功", window.wxc.xcConfirm.typeEnum.success);
+                            location.reload();
+                        },
+                        error: function (response) {
+                            btnObj.removeAttr('disabled');
+                            alert(response.data)
+                            window.wxc.xcConfirm(response.responseJSON.msg, window.wxc.xcConfirm.typeEnum.error);
+                        },
+                    });
+                },
+                onCancel: function () {
+                },
+                onClose: function () {
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+    </script>
+{% endblock %}

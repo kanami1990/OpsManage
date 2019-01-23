@@ -96,7 +96,7 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>rr_record</strong></label>
                                     <div class="col-sm-6">
                                         <input class="form-control" type="text" name="rr_record"
-                                               value="{{ ds.rr_record|default:"" }}"/>
+                                               value="{{ ds.rr_record }}" readonly/>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -110,7 +110,7 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>rr_ttl</strong></label>
                                     <div class="col-sm-6">
                                         <input class="form-control" type="text" name="rr_ttl"
-                                               value="{{ ds.rr_ttl|default:"" }}"/>
+                                               value="{{ ds.rr_ttl|default:"86400" }}"/>
                                     </div>
                                 </div>
                             </form>
@@ -160,7 +160,7 @@
                                 <label class="col-sm-3 control-label no-padding-right"
                                        for="form-field-4"><strong>rr_ttl</strong></label>
                                 <div class="col-sm-6">
-                                    <input class="form-control" type="text" name="rr_ttl"/>
+                                    <input class="form-control" type="text" value="86400" name="rr_ttl"/>
                                 </div>
                             </div>
                         </form>

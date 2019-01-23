@@ -14,7 +14,7 @@ from dnsc.models import (Dns_Zone)
 import dns.resolver,dns.zone,dns.tsigkeyring,dns.update
 
 # Create your views here.
-@permission_required('dns.can_read_dns_zone',login_url='/noperm/')
+@permission_required('dnsc.can_read_dns_zone',login_url='/noperm/')
 def listZone(request):
     try:
         zonelist = Dns_Zone.objects.all()
@@ -26,7 +26,7 @@ def addZone(request):
     return render(request, 'dns/zone_add.html', {})
 
 @api_view(['GET', 'POST' ])
-@permission_required('dns.can_add_dns_zone',raise_exception=True)
+@permission_required('dnsc.can_add_dns_zone',raise_exception=True)
 def zones(request):
     if request.method == 'POST':
         serializer = serializers.DnsZoneSerializer(data=request.data['data'])
@@ -39,7 +39,7 @@ def zones(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT','DELETE','GET'])
-@permission_required('dns.can_add_dns_zone',raise_exception=True)
+@permission_required('dnsc.can_add_dns_zone',raise_exception=True)
 def zone_detail(request,id,format=None):
     try:
         snippet = Dns_Zone.objects.get(id=id)
@@ -58,7 +58,7 @@ def zone_detail(request,id,format=None):
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@permission_required('dns.can_read_dns_zone',login_url='/noperm/')
+@permission_required('dnsc.can_read_dns_zone',login_url='/noperm/')
 def listRecord(request,aid):
     try:
         zone = Dns_Zone.objects.get(id=aid)
