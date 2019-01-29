@@ -17,9 +17,15 @@ def ws_connect(message):
     message.reply_channel.send({"accept": True})
     params = urlparse.parse_qs(message.content['query_string'])
     dbid = params.get('id', (None,))[0]
-    print('keyid = {}'.format(id))
+    filename = params.get('filename', (None,))[0]
+    print('keyid = {}'.format(filename))
+    print('filename = {}'.format(id))
     loginfo = LogSignup.objects.get(id=dbid)
-    filepath = loginfo.log_path
+    if filename:
+        if not loginfo.log_path.endswith('/'):
+            filepath = '{}/{}'.format(loginfo.log_path,filename)
+        else:filepath = '{}{}'.format(loginfo.log_path,filename)
+    else:filepath = loginfo.log_path
     log_ip = loginfo.log_ip
 
     tail_cmd = 'ssh opsadm@{} "tail -200f {}"'.format(log_ip,filepath)

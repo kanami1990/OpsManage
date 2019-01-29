@@ -1,0 +1,82 @@
+{% extends 'index.html' %}
+{% block ace-content %} 
+<!-- bootstrap-notify -->
+
+<script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+<script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>
+{% endblock %}
+{% block page-content %}
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"><i class="fa fa-user"></i> {{ logname }}</h1>
+        </div>
+    </div>
+    <div id="{{ id }}">
+            <pre id="logs_{{ id }}" class="{{ id }}"></pre>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var _newLinesCount = 0;
+    var _isWindowFocused = true;
+
+    window.addEventListener('blur', function() {
+        _isWindowFocused = false;
+    }, true);
+    window.addEventListener('focus', function() {
+        _isWindowFocused = true;
+        _newLinesCount = 0;
+        Tinycon.setBubble(0);
+    }, true);
+
+    var _isScrolledBottom = function() {
+        var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+        var totalHeight = document.body.offsetHeight;
+        var clientHeight = document.documentElement.clientHeight;
+        return totalHeight <= currentScroll + clientHeight;
+      };
+
+    var socket = new WebSocket('ws://' + window.location.host + '/ws/logs/?id={{ id }}' + '&filename={{ filename }}');
+
+    socket.onopen = function open() {
+      console.log('WebSockets connection created.');
+    };
+
+    socket.onmessage = function message(event) {
+      var data = JSON.parse(event.data);
+      var wasScrolledBottom = _isScrolledBottom();
+
+      self.logChildNodes = [];
+        console.log(JSON.stringify(data))
+        var line = data['{{ id }}'];
+        {#alert(line)#}
+        if (line !== undefined && line != '') {
+            console.log(line)
+        //if (line != '') {
+            $(".{{ id }}").append('<div class="line">'+'<p class="inner-line">'+line+'</p>'+'</div>').fadeIn();
+            var log_count = $(".{{ id }}").children().length;
+            if (log_count > 300 ) {
+                $(".{{ id }}").find('div:lt(1)').remove();
+            }
+        }
+        // search
+        self.logChildNodes = self.logChildNodes.concat(document.getElementById("logs_{{ id }}").childNodes);
+
+
+      // unread
+      if (_newLinesCount < 99 && ! _isWindowFocused) {
+          _newLinesCount += 1;
+          Tinycon.setBubble(_newLinesCount);
+      }
+
+      if (wasScrolledBottom) {
+        window.scrollTo(0, document.body.scrollHeight);
+      }
+    };
+
+    if (socket.readyState == WebSocket.OPEN) {
+      socket.onopen();
+    }
+</script>
+{% endblock %}

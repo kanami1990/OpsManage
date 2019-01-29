@@ -8,5 +8,7 @@ urlpatterns = [
     url(r'^edit/(?P<id>[0-9]+)/$', logmon_api.editlog),
     url(r'^search/$', views.log_search),
     url(r'^show/(?P<id>[0-9]+)/$', views.log_show),
+    url(r'^show2/(?P<id>[0-9]+)/$', views.log_show2),
+    url(r'^filelist/(?P<id>[0-9]+)/$', views.file_list),
 
 ]

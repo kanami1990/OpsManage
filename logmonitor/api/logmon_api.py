@@ -20,8 +20,9 @@ def signuplog(request):
         if not groups == request.data['log_groups']:
             return Response({'msg': "用户请求组不匹配"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         logpath = request.data['log_path']
-        if  ' ' in logpath.encode('utf-8').strip(' ') or '.log' != logpath.encode('utf-8')[-4:] or '/' not in logpath.encode('utf-8'):
-            return Response({'msg': "log路径非法，不能包含空格，必须以'.log'结尾, 填写完整路径"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # or '.log' != logpath.encode('utf-8')[-4:]
+        if  ' ' in logpath.encode('utf-8').strip(' ') or '/' not in logpath.encode('utf-8'):
+            return Response({'msg': "log路径非法，不能包含空格，填写完整路径"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         print(dict(request.data)['log_ip[]'])
         # serializer = serializers.LogListSerializer(data=request.data)
         tList = dict(request.data)['log_ip[]']
