@@ -43,7 +43,7 @@ def signuplog(request):
         return Response({'msg':'OK'}, status=status.HTTP_200_OK)
 
 @api_view(['PUT','DELETE'])
-@permission_required('logmonitor.can_edit_LogSign',raise_exception=True)
+@permission_required('logmonitor.can_change_LogSign',raise_exception=True)
 def editlog(request,id):
     try:
         snippet = LogSignup.objects.get(id=id)
