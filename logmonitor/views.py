@@ -85,7 +85,7 @@ def file_list(request,id):
             logpath = '{}/'.format(loginfo.log_path)
         else:logpath = loginfo.log_path
         logip = loginfo.log_ip
-        tail_cmd = "ssh opsadm@{} ls -alrt {} |grep  -E '\.log$'".format(logip, logpath)
+        tail_cmd = "ssh opsadm@{} ls -alt {} |grep  -E '\.log$'".format(logip, logpath)
         tail_popen = subprocess.Popen(tail_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         (output, err) = tail_popen.communicate()
         filelist = [ line.split(' ')[-1] for line in output.split('\n') ]
