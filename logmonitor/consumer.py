@@ -35,6 +35,7 @@ def ws_connect(message):
         def tail():
             while True:
                 line = tp.stdout.readline()
+                # line = line.replace('<','&lt;').replace('>','&gt;').replace('&','&amp').replace('"','&quot;')
                 message.reply_channel.send({'text': json.dumps({dbid: line.decode('utf-8')})})
         return tail
 

@@ -54,7 +54,8 @@
         if (line !== undefined && line != '') {
             console.log(line)
         //if (line != '') {
-            $(".{{ id }}").append('<div class="line">'+'<p class="inner-line">'+line+'</p>'+'</div>').fadeIn();
+            {#$(".{{ id }}").append('<div class="line">'+'<p class="inner-line">'+line+'</p>'+'</div>').fadeIn();#}
+            $(".{{ id }}").append('<div class="line">'+'<p class="inner-line">'+'<xmp>'+line+'</xmp>'+'</p>'+'</div>').fadeIn();
             var log_count = $(".{{ id }}").children().length;
             if (log_count > 300 ) {
                 $(".{{ id }}").find('div:lt(1)').remove();
