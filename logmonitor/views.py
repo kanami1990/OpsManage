@@ -23,7 +23,7 @@ def log_signup(request):
         userid = request.user.id
         groups = ','.join(request.user.groups.values_list('name',flat=True))
         gids = request.user.groups.values_list('id',flat=True)
-        query = reduce(operator.and_, (Q(log_groups__contains = g_name) for g_name in request.user.groups.values_list('name',flat=True)))
+        query = reduce(operator.or_, (Q(log_groups__contains = g_name) for g_name in request.user.groups.values_list('name',flat=True)))
         loglist = LogSignup.objects.filter(query)
         assetsList = Assets.objects.filter(assets_type='server',status=0,group__in=gids)
         serverList = [{'management_ip': a.server_assets.ip} for a in assetsList]
@@ -37,7 +37,7 @@ def log_search(request):
     elif request.method == 'POST':
         try:
             sys_mod = request.POST.get('sysmod')
-            query = reduce(operator.and_, (Q(log_groups__contains=g_name) for g_name in
+            query = reduce(operator.or_, (Q(log_groups__contains=g_name) for g_name in
                                            request.user.groups.values_list('name', flat=True)))
             loglist = LogSignup.objects.filter(query).filter(log_systag=sys_mod)
             dataList = []
