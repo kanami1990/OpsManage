@@ -32,7 +32,11 @@ def log_signup(request):
 
 def log_search(request):
     if request.method == 'GET':
-        sysmodList = [m.log_systag for m in LogSignup.objects.raw('SELECT id,log_systag from logmonitor_logsignup WHERE log_systag is not null  GROUP BY log_systag')]
+        sysmodList = []
+        for group in request.user.groups.values_list('name',flat=True):
+            sysmodList.extend([m.log_systag for m in LogSignup.objects.raw('SELECT id,log_systag from logmonitor_logsignup WHERE log_systag is not null AND log_groups=\'{}\' GROUP BY log_systag'.format(group))])
+        # sysmodList = [m.log_systag for m in LogSignup.objects.raw('SELECT id,log_systag from logmonitor_logsignup WHERE log_systag is not null  GROUP BY log_systag')]
+        sysmodList=list(set(sysmodList))
         return render(request, 'logmonitor/log_search.html', {'sysmodList':sysmodList})
     elif request.method == 'POST':
         try:
@@ -43,7 +47,8 @@ def log_search(request):
             dataList = []
             for log in loglist:
                 opt = '''
-                <a href="/logmon/show/{id}" style="text-decoration:none;" target="_blank"><button  type="button" class="btn btn-default"><abbr title="查看日志"><i class="glyphicon glyphicon-screenshot"></button></i></abbr></a>
+                <a href="/logmon/show/{id}" style="text-decoration:none;" target="_blank">tail</a>
+                <a href="#" style="text-decoration:none;">Download</a>
                 '''.format(id=log.id)
                 dataList.append(
                     {
