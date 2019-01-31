@@ -4,6 +4,10 @@ import urllib2,json,simplejson
 
 
 def getAccesstoken(sCorpID, secret):
+    proxy = urllib2.ProxyHandler({'http': '172.30.20.10:3128', 'https': '172.30.20.10:3128'})
+    opener = urllib2.build_opener(proxy)
+    urllib2.install_opener(opener)
+
     gettoken_url = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=' + sCorpID + '&corpsecret=' + secret
     try:
         token_file = urllib2.urlopen(gettoken_url)
@@ -23,6 +27,10 @@ class weChatFunc(object):
         super(weChatFunc,self).__init__()
 
     def sendMSG(self, content,agentid,accesstoken):
+        proxy = urllib2.ProxyHandler({'http': '172.30.20.10:3128','https':'172.30.20.10:3128'})
+        opener = urllib2.build_opener(proxy)
+        urllib2.install_opener(opener)
+
         send_url = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=' + accesstoken
         send_values = structMSG(content, agentid).getCardMSG()
         send_data = simplejson.dumps(send_values, ensure_ascii=False).encode('utf-8')
