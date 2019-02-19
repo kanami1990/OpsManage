@@ -25,6 +25,7 @@ def statusDecode(status):
 def osDecode(os):
     centos = '^[Cc]entOS'
     win = '^[Ww]indows'
+    ubuntu = '^[Uu]buntu'
     if re.match(centos, os):
         verR = '\d\.\d+'
         ver = re.search(verR, os)
@@ -39,6 +40,9 @@ def osDecode(os):
             return  ['windows',ver.group().lower()]
         else:
             return ['windows','2008 r2']
+    elif re.match(ubuntu,os):
+        fieldList = os.split(' ')
+        return ['Ubuntu',fieldList[1]]
     else:
         return [None,None]
 
@@ -102,7 +106,6 @@ def vm_detail(request, id,format=None):
 @api_view(['POST'])
 @permission_required('OpsManage.can_change_assets',raise_exception=True)
 def assets_syncitop(request):
-    # TODO add sync to itop code
     if request.method == "POST":
         fList = []
         sList = []
