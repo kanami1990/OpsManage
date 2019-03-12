@@ -1,142 +1,150 @@
 {% extends 'index.html' %}
 {% block page-content %}
-<div id="page-wrapper">
-    <div class="row">
-         <div class="col-lg-12">
-              <h1 class="page-header"><i class="fa  fa-wrench  "></i> 全局配置</h1>
-         </div>
-                <!-- /.col-lg-12 -->
-    </div>
-	<div class="row">
-                <div class="col-lg-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                           	<i class="fa   fa-gear"></i> 全局配置
-                        </div>
-                        <div class="panel-body">               
-				           <ul class="nav nav-tabs">
-				              <li class="active"><a href="#home" data-toggle="tab"><i class="fa fa-history"></i> 日志记录</a>
-				              </li>
-				              <li><a href="#profile" data-toggle="tab"><i class="fa fa-envelope"></i> 部署通知</a>
-				              </li>
-                              <li><a href="#zabbix" data-toggle="tab"><i class="fa fa-envelope"></i> zabbix配置</a>
-				              </li>
-                               <li><a href="#itop" data-toggle="tab"><i class="fa fa-dashboard"></i> iTop配置</a>
-				              </li>
-{#                               <li><a href="#jenkins" data-toggle="tab"><i class="fa fa-dashboard"></i> Jenkins配置</a>#}
-{#				              </li>#}
-				           </ul>
-				
-				                            
-				           <div class="tab-content">
-				              <div class="tab-pane fade in active" id="home">
-				                   <div class="row">
-				                   		<div class="col-lg-12">
-				                   			<br>
-											<form role="form" method="post" id="addConfig" class="main form-horizontal" >{% csrf_token %}			
-						
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa  fa-tasks"></i> 模块操作记录</label>
-													 <div class="col-sm-6">
-														<select class="form-control" name="ansible_model">
-															{% if config.ansible_model == 1 %}
-																<option selected="selected" value="1">开启</option>
-																<option value="0">关闭</option>																			
-															{% else %}
-																<option selected="selected" value="0">关闭</option>
-																<option  value="1">开启</option>
-															{% endif %}																		
-														</select>
-													 </div>
-												</div>
-												
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-bookmark"></i> 剧本操作记录</label>
-													 <div class="col-sm-6">
-														<select class="form-control" name="ansible_playbook">
-															{% if config.ansible_playbook == 1 %}
-																<option selected="selected" value="1">开启</option>
-																<option value="0">关闭</option>																			
-															{% else %}
-																<option selected="selected" value="0">关闭</option>
-																<option  value="1">开启</option>
-															{% endif %}																		
-														</select>
-													 </div>
-												</div>				
-												
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-clock-o"></i> 计划任务操作记录</label>
-													 <div class="col-sm-6">
-														<select class="form-control" name="cron">
-															{% if config.cron == 1 %}
-																<option selected="selected" value="1">开启</option>
-																<option value="0">关闭</option>																			
-															{% else %}
-																<option selected="selected" value="0">关闭</option>
-																<option  value="1">开启</option>
-															{% endif %}																		
-														</select>
-													 </div>
-												</div>
-												
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-github-alt"></i> 项目操作记录</label>
-													 <div class="col-sm-6">
-														<select class="form-control" name="project">
-															{% if config.project == 1 %}
-																<option selected="selected" value="1">开启</option>
-																<option value="0">关闭</option>																			
-															{% else %}
-																<option selected="selected" value="0">关闭</option>
-																<option  value="1">开启</option>
-															{% endif %}																		
-														</select>
-													 </div>
-												</div>																			
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-database"></i> 资产操作记录</label>
-													 <div class="col-sm-6">
-														<select class="form-control" name="assets">
-															{% if config.assets == 1 %}
-																<option selected="selected" value="1">开启</option>
-																<option value="0">关闭</option>																			
-															{% else %}
-																<option selected="selected" value="0">关闭</option>
-																<option  value="1">开启</option>
-															{% endif %}																		
-														</select>
-													 </div>
-												</div>												
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa  fa-linux"></i> 服务器命令记录</label>
-													 <div class="col-sm-6">
-														<select class="form-control" name="server">
-															{% if config.server == 1 %}
-																<option selected="selected" value="1">开启</option>
-																<option value="0">关闭</option>																			
-															{% else %}
-																<option selected="selected" value="0">关闭</option>
-																<option  value="1">开启</option>
-															{% endif %}																		
-														</select>
-													 </div>
-												</div>		
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-envelope-square"></i> 部署通知</label>
-													 <div class="col-sm-6">
-														<select class="form-control" name="email">
-															{% if config.email == 1 %}
-																<option selected="selected" value="1">开启</option>
-																<option value="0">关闭</option>																			
-															{% else %}
-																<option selected="selected" value="0">关闭</option>
-																<option  value="1">开启</option>
-															{% endif %}																		
-														</select>
-													 </div>
-												</div>																							
-<!-- 												<div class="form-group" >
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa  fa-wrench  "></i> 全局配置</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa   fa-gear"></i> 全局配置
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab"><i class="fa fa-history"></i> 日志记录</a>
+                            </li>
+                            <li><a href="#profile" data-toggle="tab"><i class="fa fa-envelope"></i> 部署通知</a>
+                            </li>
+                            <li><a href="#zabbix" data-toggle="tab"><i class="fa fa-envelope"></i> zabbix配置</a>
+                            </li>
+                            <li><a href="#itop" data-toggle="tab"><i class="fa fa-dashboard"></i> iTop配置</a>
+                            </li>
+                            <li><a href="#rsync" data-toggle="tab"><i class="fa fa-dashboard"></i> Rsync配置</a>
+                            </li>
+                        </ul>
+
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="home">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <br>
+                                        <form role="form" method="post" id="addConfig"
+                                              class="main form-horizontal">{% csrf_token %}
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa  fa-tasks"></i>
+                                                    模块操作记录</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" name="ansible_model">
+                                                        {% if config.ansible_model == 1 %}
+                                                            <option selected="selected" value="1">开启</option>
+                                                            <option value="0">关闭</option>
+                                                        {% else %}
+                                                            <option selected="selected" value="0">关闭</option>
+                                                            <option value="1">开启</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-bookmark"></i>
+                                                    剧本操作记录</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" name="ansible_playbook">
+                                                        {% if config.ansible_playbook == 1 %}
+                                                            <option selected="selected" value="1">开启</option>
+                                                            <option value="0">关闭</option>
+                                                        {% else %}
+                                                            <option selected="selected" value="0">关闭</option>
+                                                            <option value="1">开启</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-clock-o"></i>
+                                                    计划任务操作记录</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" name="cron">
+                                                        {% if config.cron == 1 %}
+                                                            <option selected="selected" value="1">开启</option>
+                                                            <option value="0">关闭</option>
+                                                        {% else %}
+                                                            <option selected="selected" value="0">关闭</option>
+                                                            <option value="1">开启</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-github-alt"></i>
+                                                    项目操作记录</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" name="project">
+                                                        {% if config.project == 1 %}
+                                                            <option selected="selected" value="1">开启</option>
+                                                            <option value="0">关闭</option>
+                                                        {% else %}
+                                                            <option selected="selected" value="0">关闭</option>
+                                                            <option value="1">开启</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-database"></i>
+                                                    资产操作记录</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" name="assets">
+                                                        {% if config.assets == 1 %}
+                                                            <option selected="selected" value="1">开启</option>
+                                                            <option value="0">关闭</option>
+                                                        {% else %}
+                                                            <option selected="selected" value="0">关闭</option>
+                                                            <option value="1">开启</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa  fa-linux"></i>
+                                                    服务器命令记录</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" name="server">
+                                                        {% if config.server == 1 %}
+                                                            <option selected="selected" value="1">开启</option>
+                                                            <option value="0">关闭</option>
+                                                        {% else %}
+                                                            <option selected="selected" value="0">关闭</option>
+                                                            <option value="1">开启</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i
+                                                        class="fa fa-envelope-square"></i> 部署通知</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" name="email">
+                                                        {% if config.email == 1 %}
+                                                            <option selected="selected" value="1">开启</option>
+                                                            <option value="0">关闭</option>
+                                                        {% else %}
+                                                            <option selected="selected" value="0">关闭</option>
+                                                            <option value="1">开启</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!-- 												<div class="form-group" >
 													 <label class="col-sm-2 control-label"><i class="fa fa-terminal"></i> WebSSH</label>
 													 <div class="col-sm-6">
 														<select class="form-control" name="webssh">
@@ -149,455 +157,751 @@
 															{% endif %}																		
 														</select>
 													 </div>
-												</div> -->	
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-github"></i> SQL</label>
-													 <div class="col-sm-6">
-														<select class="form-control" name="sql">
-															{% if config.sql == 1 %}
-																<option selected="selected" value="1">开启</option>
-																<option value="0">关闭</option>																			
-															{% else %}
-																<option selected="selected" value="0">关闭</option>
-																<option  value="1">开启</option>
-															{% endif %}																		
-														</select>
-													 </div>
-												</div>																								
-												<div class="hr hr32 hr-dotted"></div>                                        
-												<div class="form-group">
-													<div class="col-md-offset-3 col-md-9">
-														<button class="btn btn-default" type="button" onclick="addConfigData(this)">
-															<i class="fa fa-check"></i>
-																			提交
-														</button>						
-																		&nbsp; &nbsp; &nbsp;
-														<button class="btn btn-default" type="reset">
-															<i class="fa fa-undo"></i>
-																			撤销
-														</button>
-													</div>
-												</div>
-												</form>					                   		
-				                   		</div>
+												</div> -->
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-github"></i>
+                                                    SQL</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" name="sql">
+                                                        {% if config.sql == 1 %}
+                                                            <option selected="selected" value="1">开启</option>
+                                                            <option value="0">关闭</option>
+                                                        {% else %}
+                                                            <option selected="selected" value="0">关闭</option>
+                                                            <option value="1">开启</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="hr hr32 hr-dotted"></div>
+                                            <div class="form-group">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button class="btn btn-default" type="button"
+                                                            onclick="addConfigData(this)">
+                                                        <i class="fa fa-check"></i>
+                                                        提交
+                                                    </button>
+                                                    &nbsp; &nbsp; &nbsp;
+                                                    <button class="btn btn-default" type="reset">
+                                                        <i class="fa fa-undo"></i>
+                                                        撤销
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
 
-				                   </div>
-				              </div>
-				              <div class="tab-pane fade" id="profile">
-				                   <div class="row">
-				                   		<div class="col-lg-12">
-				                   			<br>
-											<form role="form" method="post" id="addEmail" class="main form-horizontal" >{% csrf_token %}			
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="profile">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <br>
+                                        <form role="form" method="post" id="addEmail"
+                                              class="main form-horizontal">{% csrf_token %}
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{email.site}}" placeholder="http://192.168.1.233" name="site" />
-													 </div>
-												</div>
-						
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-user"></i> SMTP服务器地址</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{email.host}}" placeholder="smtp.163.com" name="host" />
-													 </div>
-												</div>
-												
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-subscript"></i> 端口</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" id="form-field-3" value="{{email.port}}" placeholder="25" name="port" />
-													 </div>
-												</div>				
-												
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i> 发送账户</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{email.user}}" placeholder="ops@163.com" name="user" />
-													 </div>
-												</div>
-												
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> 密码</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="password" id="form-field-3" value="{{email.passwd}}" placeholder="email" name="passwd" />
-													 </div>
-												</div>																			
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-flag-o  "></i> 邮件主题标识</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" id="form-field-3" value="{{email.subject}}" placeholder="[xx公司]" name="subject" />
-													 </div>
-												</div>												
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-pencil-square-o"></i> 抄送用户</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" id="form-field-3" value="{{email.cc_user|default:""}}" placeholder="多个邮箱以,号分开" name="cc_user" />
-													 </div>
-												</div>												
-												
-												<div class="hr hr32 hr-dotted"></div>                                        
-												<div class="form-group">
-													<div class="col-md-offset-3 col-md-9">
-														<button class="btn btn-default" type="buttun" onclick="addEmailData(this)">
-															<i class="fa fa-check"></i>
-																			提交
-														</button>						
-																		&nbsp; &nbsp; &nbsp;
-														<button class="btn btn-default" type="reset">
-															<i class="fa fa-undo"></i>
-																			撤销
-														</button>
-													</div>
-												</div>
-												</form>				                   			
-										</div>
-				                   </div>
-				              </div>
-                              <div class="tab-pane fade" id="zabbix">
-				                   <div class="row">
-				                   		<div class="col-lg-12">
-				                   			<br>
-											<form role="form" method="post" id="addZabbix" class="main form-horizontal" >{% csrf_token %}
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ email.site }}"
+                                                           placeholder="http://192.168.1.233" name="site"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{zabbix.site}}" placeholder="http://192.168.1.233" name="site" />
-													 </div>
-												</div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-user"></i>
+                                                    SMTP服务器地址</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ email.host }}"
+                                                           placeholder="smtp.163.com" name="host"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-user"></i> Zabbix API服务器地址</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{zabbix.host}}" placeholder="http://172.21.14.23/zabbix/" name="host" />
-													 </div>
-												</div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-subscript"></i> 端口</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" id="form-field-3"
+                                                           value="{{ email.port }}" placeholder="25" name="port"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-subscript"></i> Zabbix API服务器端口</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" id="form-field-3" value="{{zabbix.port}}" placeholder="80" name="port" />
-													 </div>
-												</div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i>
+                                                    发送账户</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ email.user }}"
+                                                           placeholder="ops@163.com" name="user"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i> zabbix账户</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{zabbix.user}}" placeholder="Admin" name="user" />
-													 </div>
-												</div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-lock"></i>
+                                                    密码</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="password" id="form-field-3"
+                                                           value="{{ email.passwd }}" placeholder="email"
+                                                           name="passwd"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-flag-o  "></i>
+                                                    邮件主题标识</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" id="form-field-3"
+                                                           value="{{ email.subject }}" placeholder="[xx公司]"
+                                                           name="subject"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i
+                                                        class="fa fa-pencil-square-o"></i> 抄送用户</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" id="form-field-3"
+                                                           value="{{ email.cc_user|default:"" }}"
+                                                           placeholder="多个邮箱以,号分开" name="cc_user"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> Zabbix密码</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="password" id="form-field-3" value="{{zabbix.passwd}}" placeholder="hjiuy89" name="passwd" />
-													 </div>
-												</div>
+                                            <div class="hr hr32 hr-dotted"></div>
+                                            <div class="form-group">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button class="btn btn-default" type="buttun"
+                                                            onclick="addEmailData(this)">
+                                                        <i class="fa fa-check"></i>
+                                                        提交
+                                                    </button>
+                                                    &nbsp; &nbsp; &nbsp;
+                                                    <button class="btn btn-default" type="reset">
+                                                        <i class="fa fa-undo"></i>
+                                                        撤销
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="zabbix">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <br>
+                                        <form role="form" method="post" id="addZabbix"
+                                              class="main form-horizontal">{% csrf_token %}
 
-												<div class="hr hr32 hr-dotted"></div>
-												<div class="form-group">
-													<div class="col-md-offset-3 col-md-9">
-														<button class="btn btn-default" type="buttun" onclick="addZabbixData(this)">
-															<i class="fa fa-check"></i>
-																			提交
-														</button>
-																		&nbsp; &nbsp; &nbsp;
-														<button class="btn btn-default" type="reset">
-															<i class="fa fa-undo"></i>
-																			撤销
-														</button>
-													</div>
-												</div>
-												</form>
-										</div>
-				                   </div>
-				              </div>
-                              <div class="tab-pane fade" id="itop">
-				                   <div class="row">
-				                   		<div class="col-lg-12">
-				                   			<br>
-											<form role="form" method="post" id="addiTop" class="main form-horizontal" >{% csrf_token %}
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ zabbix.site }}"
+                                                           placeholder="http://192.168.1.233" name="site"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{itop.site}}" placeholder="http://192.168.1.233" name="site" />
-													 </div>
-												</div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-user"></i> Zabbix
+                                                    API服务器地址</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ zabbix.host }}"
+                                                           placeholder="http://172.21.14.23/zabbix/" name="host"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-user"></i> iTop API服务器地址</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{itop.host}}" placeholder="http://172.21.14.23/itop/" name="host" />
-													 </div>
-												</div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-subscript"></i>
+                                                    Zabbix API服务器端口</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" id="form-field-3"
+                                                           value="{{ zabbix.port }}" placeholder="80" name="port"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i> iTop账户</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="text" value="{{itop.user}}" placeholder="Admin" name="user" />
-													 </div>
-												</div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i>
+                                                    zabbix账户</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ zabbix.user }}"
+                                                           placeholder="Admin" name="user"/>
+                                                </div>
+                                            </div>
 
-												<div class="form-group" >
-													 <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> iTop密码</label>
-													 <div class="col-sm-6">
-													 	<input class="form-control" type="password" id="form-field-3" value="{{itop.passwd}}" placeholder="3edcvfr4" name="passwd" />
-													 </div>
-												</div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-lock"></i>
+                                                    Zabbix密码</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="password" id="form-field-3"
+                                                           value="{{ zabbix.passwd }}" placeholder="hjiuy89"
+                                                           name="passwd"/>
+                                                </div>
+                                            </div>
 
-												<div class="hr hr32 hr-dotted"></div>
-												<div class="form-group">
-													<div class="col-md-offset-3 col-md-9">
-														<button class="btn btn-default" type="buttun" onclick="addiTopData(this)">
-															<i class="fa fa-check"></i>
-																			提交
-														</button>
-																		&nbsp; &nbsp; &nbsp;
-														<button class="btn btn-default" type="reset">
-															<i class="fa fa-undo"></i>
-																			撤销
-														</button>
-													</div>
-												</div>
-												</form>
-										</div>
-				                   </div>
-				              </div>
-{#                               <div class="tab-pane fade" id="jenkins">#}
-{#				                   <div class="row">#}
-{#				                   		<div class="col-lg-12">#}
-{#				                   			<br>#}
-{#											<form role="form" method="post" id="addJenkins" class="main form-horizontal" >{% csrf_token %}#}
-{#												<div class="form-group" >#}
-{#													 <label class="col-sm-2 control-label"><i class="fa fa-user"></i> Jenkins服务器地址</label>#}
-{#													 <div class="col-sm-6">#}
-{#													 	<input class="form-control" type="text" value="{{jenkins.host}}" placeholder="http://172.21.14.23/itop/" name="host" />#}
-{#													 </div>#}
-{#												</div>#}
-{#												<div class="form-group" >#}
-{#													 <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i> Jenkins账户</label>#}
-{#													 <div class="col-sm-6">#}
-{#													 	<input class="form-control" type="text" value="{{jenkins.user}}" placeholder="Admin" name="user" />#}
-{#													 </div>#}
-{#												</div>#}
-{##}
-{#												<div class="form-group" >#}
-{#													 <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> Jenkins密码</label>#}
-{#													 <div class="col-sm-6">#}
-{#													 	<input class="form-control" type="password" id="form-field-3" value="{{jenkins.passwd}}" placeholder="3edcvfr4" name="passwd" />#}
-{#													 </div>#}
-{#												</div>#}
-{##}
-{#												<div class="hr hr32 hr-dotted"></div>#}
-{#												<div class="form-group">#}
-{#													<div class="col-md-offset-3 col-md-9">#}
-{#														<button class="btn btn-default" type="buttun" onclick="addJenkinsData(this)">#}
-{#															<i class="fa fa-check"></i>#}
-{#																			提交#}
-{#														</button>#}
-{#																		&nbsp; &nbsp; &nbsp;#}
-{#														<button class="btn btn-default" type="reset">#}
-{#															<i class="fa fa-undo"></i>#}
-{#																			撤销#}
-{#														</button>#}
-{#													</div>#}
-{#												</div>#}
-{#												</form>#}
-{#										</div>#}
-{#				                   </div>#}
-{#				              </div>#}
-				           </div>
+                                            <div class="hr hr32 hr-dotted"></div>
+                                            <div class="form-group">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button class="btn btn-default" type="buttun"
+                                                            onclick="addZabbixData(this)">
+                                                        <i class="fa fa-check"></i>
+                                                        提交
+                                                    </button>
+                                                    &nbsp; &nbsp; &nbsp;
+                                                    <button class="btn btn-default" type="reset">
+                                                        <i class="fa fa-undo"></i>
+                                                        撤销
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="itop">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <br>
+                                        <form role="form" method="post" id="addiTop"
+                                              class="main form-horizontal">{% csrf_token %}
 
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-globe"></i> 本站点URL</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ itop.site }}"
+                                                           placeholder="http://192.168.1.233" name="site"/>
+                                                </div>
+                                            </div>
 
-                            <!-- /.row (nested) -->
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-user"></i> iTop
+                                                    API服务器地址</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ itop.host }}"
+                                                           placeholder="http://172.21.14.23/itop/" name="host"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i>
+                                                    iTop账户</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="text" value="{{ itop.user }}"
+                                                           placeholder="Admin" name="user"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><i class="fa fa-lock"></i> iTop密码</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" type="password" id="form-field-3"
+                                                           value="{{ itop.passwd }}" placeholder="3edcvfr4"
+                                                           name="passwd"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="hr hr32 hr-dotted"></div>
+                                            <div class="form-group">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button class="btn btn-default" type="buttun"
+                                                            onclick="addiTopData(this)">
+                                                        <i class="fa fa-check"></i>
+                                                        提交
+                                                    </button>
+                                                    &nbsp; &nbsp; &nbsp;
+                                                    <button class="btn btn-default" type="reset">
+                                                        <i class="fa fa-undo"></i>
+                                                        撤销
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="rsync">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <br>
+                                        <form role="form" method="post" id="addRsync"
+                                              class="main form-horizontal">{% csrf_token %}
+
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label"><i class="fa fa-globe"></i>
+                                                    Rsync服务器</label>
+                                                <div class="col-sm-4">
+                                                    <input class="form-control" type="text" value="{{ rsync.server }}"
+                                                           placeholder="192.168.1.233" name="server"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label"><i class="fa fa-globe"></i>
+                                                    备份基础目录</label>
+                                                <div class="col-sm-4">
+                                                    <input class="form-control" type="text" value="{{ rsync.base_bak_path }}"
+                                                           placeholder="/bak/file" name="base_bak_path"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label"><i class="fa fa-globe"></i>
+                                                    全局备份用户</label>
+                                                <div class="col-sm-4">
+                                                    <input class="form-control" type="text" value="{{ rsync.bak_user }}"
+                                                           placeholder="opsadm" name="bak_user"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label"><i class="fa fa-globe"></i>
+                                                    配置文件路径</label>
+                                                <div class="col-sm-4">
+                                                    <input class="form-control" type="text" value="{{ rsync.config_path }}"
+                                                           placeholder="/etc/rsyncd/rsyncd.conf" name="config_path"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label"><i class="fa fa-globe"></i>
+                                                    Pass文件路径</label>
+                                                <div class="col-sm-4">
+                                                    <input class="form-control" type="text" value="{{ rsync.pass_path }}"
+                                                           placeholder="/etc/rsyncd/rsyncd.pass" name="pass_path"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="hr hr32 hr-dotted"></div>
+                                            <div class="form-group">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button class="btn btn-default" type="buttun"
+                                                            onclick="addRsyncData(this)">
+                                                        <i class="fa fa-check"></i>
+                                                        提交
+                                                    </button>
+                                                    <button class="btn btn-default" type="reset">
+                                                        <i class="fa fa-undo"></i>
+                                                        撤销
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <br>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                租户密码表
+                                            </div>
+                                            <div class="panel-heading">
+                                                <div class="btn-group btn-group-xs pull-right">
+                                                    <button type="button" class="btn btn-default"><a href="#"
+                                                                                                     data-toggle="modal"
+                                                                                                     data-target="#addTenantPasswdModal"><i
+                                                            class="fa fa-refresh fa-fw"></i>新增租户密码</a></button>
+                                                </div>
+                                                <i class="fa  fa-github-alt  "></i> 租户密码表
+                                            </div>
+                                            <div class="panel-body">
+                                                <table width="100%"
+                                                       class="table table-striped table-bordered table-hover"
+                                                       id="bkTenantPasswdList">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>租户</th>
+                                                        <th>密码</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for ds in bkTenantPasswdList %}
+                                                        <tr class="odd gradeX">
+                                                            <td>{{ ds.group.name }} </td>
+                                                            <td>{{ ds.bc_passwd }} </td>
+                                                            <td>
+                                                                <div class="btn-group">
+                                                                    <button type="button" class="btn btn-xs btn-default"
+                                                                            data-toggle="modal"
+                                                                            data-target="#tenantPasswdModalEditModal-{{ ds.bc_name_id }}">
+                                                                        <abbr title="編輯"><i
+                                                                                class="fa fa-edit"></i></abbr>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="btn-group">
+                                                                    <button type="button" class="btn btn-xs btn-default"
+                                                                            onclick="deleteTenantPasswd(this,{{ ds.bc_name_id }})">
+                                                                        <abbr
+                                                                                title="删除"><i
+                                                                                class="glyphicon glyphicon-trash"></i></abbr>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                <!-- /.table-responsive -->
+                                            </div>
+                                            <!-- /.panel-body -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-                        <!-- /.panel-body -->
+
+
+                        <!-- /.row (nested) -->
                     </div>
-                    <!-- /.panel -->
+                    <!-- /.panel-body -->
                 </div>
-                <!-- /.col-lg-12 -->
-            </div>    
-</div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <div class="modal fade" id="addTenantPasswdModal" tabindex="-1" role="dialog"
+             aria-labelledby="addTenantPasswdModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="addTenantPasswdModalLabel">
+                            添加租户密码
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" method="post" id="addTenantPasswd"
+                              class="main form-horizontal">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> 租户</label>
+                                <div class="col-sm-6">
+                                    <select class="form-control" name="tenant_id" id="tenant_id">
+                                        <option selected="selected" value="">请选择一个租户</option>
+                                        {% for g in group %}
+                                            <option value="{{ g.id }}" name="db_owner">{{ g.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><i class="fa fa-keyboard-o"></i> 密码</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="password" value="" placeholder="不能为空"
+                                           name="tenant_passwd"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="addTenantPasswd(this)">
+                            添加
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    </div>
 
+        {% for ds in bkTenantPasswdList %}
+        <div class="modal fade" id="tenantPasswdModalEditModal-{{ ds.bc_name_id }}" tabindex="-1" role="dialog"
+             aria-labelledby="tenantPasswdEditModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="tenantPasswdEditModalLabel">
+                            修改租户密码
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" method="post" id="tenantPasswdMod-{{ ds.bc_name_id }}"
+                              class="main form-horizontal">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> 租户密码</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="password"
+                                           placeholder="不能为空" name="bc_passwd"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="modTenantPasswd(this, {{ ds.bc_name_id }})">
+                            修改
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    {% endfor %}
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-		function addConfigData(obj) {
-			var btnObj = $(obj);
-			btnObj.attr('disabled',true);
-			var post_data = {}; 
-			var putUrl = '/config/';
-			var form = document.getElementById('addConfig');
-			for (var i = 0; i < form.length; ++i) {
-				var name = form[i].name;
-				var value = form[i].value;
-				if (name.length > 0 && value.length > 0){
-					post_data[name] = value;
-				}
-				
-			};
-			post_data['op'] = 'log';
-			$.ajax({
-				dataType: "JSON",
-				url:putUrl, //请求地址
-				type:"POST",  //提交类似
-				data:post_data, //提交参数
-				success:function(response){
-					btnObj.removeAttr('disabled');
-					window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
-					location.reload();
-				},
-		    	error:function(response){
-		    		btnObj.removeAttr('disabled');
-		    		window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
-		    		location.reload();
-		    	}
-			})	
-		}
-		
-		function addEmailData(obj) {
-			var btnObj = $(obj);
-			btnObj.attr('disabled',true);
-			var required = ["host","port","user","passwd","site"];
-			var post_data = {}; 
-			var putUrl = '/config/';
-			var form = document.getElementById('addEmail');
-			for (var i = 1; i < form.length; ++i) {
-				var name = form[i].name;
-				var value = form[i].value;	
-				idx = $.inArray(name, required);						
-				if (idx >= 0 && value.length == 0){
-					window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
-					return false;
-				};	
-				if ( value.length != 0 && name.length != 0 ){
-					post_data[name] = value;
-				};					
-			};	
-			post_data['op'] = 'email';
-			$.ajax({
-				dataType: "JSON",
-				url:putUrl, //请求地址
-				type:"POST",  //提交类似
-				data:post_data, //提交参数
-				success:function(response){
-					btnObj.removeAttr('disabled');
-					window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
+        function addConfigData(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var post_data = {};
+            var putUrl = '/config/';
+            var form = document.getElementById('addConfig');
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                if (name.length > 0 && value.length > 0) {
+                    post_data[name] = value;
+                }
+
+            }
+            ;
+            post_data['op'] = 'log';
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
+                    location.reload();
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
+                    location.reload();
+                }
+            })
+        }
+
+        function addEmailData(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var required = ["host", "port", "user", "passwd", "site"];
+            var post_data = {};
+            var putUrl = '/config/';
+            var form = document.getElementById('addEmail');
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+                ;
+            }
+            ;
+            post_data['op'] = 'email';
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
 // 					location.reload();
-				},
-		    	error:function(response){
-		    		btnObj.removeAttr('disabled');
-		    		window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
-		    	}
-			})	
-		}
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
 
-		function addZabbixData(obj) {
-			var btnObj = $(obj);
-			btnObj.attr('disabled',true);
-			var required = ["host","port","user","passwd","site"];
-			var post_data = {};
-			var putUrl = '/config/';
-			var form = document.getElementById('addZabbix');
-			for (var i = 1; i < form.length; ++i) {
-				var name = form[i].name;
-				var value = form[i].value;
-				idx = $.inArray(name, required);
-				if (idx >= 0 && value.length == 0){
-					window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
-					return false;
-				};
-				if ( value.length != 0 && name.length != 0 ){
-					post_data[name] = value;
-				};
-			};
-			post_data['op'] = 'zabbix';
-			$.ajax({
-				dataType: "JSON",
-				url:putUrl, //请求地址
-				type:"POST",  //提交类似
-				data:post_data, //提交参数
-				success:function(response){
-					btnObj.removeAttr('disabled');
-					window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
+        function addZabbixData(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var required = ["host", "port", "user", "passwd", "site"];
+            var post_data = {};
+            var putUrl = '/config/';
+            var form = document.getElementById('addZabbix');
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+                ;
+            }
+            ;
+            post_data['op'] = 'zabbix';
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
 // 					location.reload();
-				},
-		    	error:function(response){
-		    		btnObj.removeAttr('disabled');
-		    		window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
-		    	}
-			})
-		}
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
 
-		function addiTopData(obj) {
-			var btnObj = $(obj);
-			btnObj.attr('disabled',true);
-			var required = ["host","user","passwd","site"];
-			var post_data = {};
-			var putUrl = '/config/';
-			var form = document.getElementById('addiTop');
-			for (var i = 1; i < form.length; ++i) {
-				var name = form[i].name;
-				var value = form[i].value;
-				idx = $.inArray(name, required);
-				if (idx >= 0 && value.length == 0){
-					window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
-					return false;
-				};
-				if ( value.length != 0 && name.length != 0 ){
-					post_data[name] = value;
-				};
-			};
-			post_data['op'] = 'itop';
-			$.ajax({
-				dataType: "JSON",
-				url:putUrl, //请求地址
-				type:"POST",  //提交类似
-				data:post_data, //提交参数
-				success:function(response){
-					btnObj.removeAttr('disabled');
-					window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
+        function addiTopData(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var required = ["host", "user", "passwd", "site"];
+            var post_data = {};
+            var putUrl = '/config/';
+            var form = document.getElementById('addiTop');
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+                ;
+            }
+            ;
+            post_data['op'] = 'itop';
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
 // 					location.reload();
-				},
-		    	error:function(response){
-		    		btnObj.removeAttr('disabled');
-		    		window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
-		    	}
-			})
-		}
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
 
-		function addJenkinsData(obj) {
-			var btnObj = $(obj);
-			btnObj.attr('disabled',true);
-			var required = ["host","user","passwd"];
-			var post_data = {};
-			var putUrl = '/config/';
-			var form = document.getElementById('addJenkins');
-			for (var i = 1; i < form.length; ++i) {
-				var name = form[i].name;
-				var value = form[i].value;
+        function addRsyncData(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var required = ["server"];
+            var post_data = {};
+            var putUrl = '/config/';
+            var form = document.getElementById('addRsync');
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
                 post_data[name] = value;
-			};
-			post_data['op'] = 'jenkins';
-			$.ajax({
-				dataType: "JSON",
-				url:putUrl, //请求地址
-				type:"POST",  //提交类似
-				data:post_data, //提交参数
-				success:function(response){
-					btnObj.removeAttr('disabled');
-					window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
+            }
+            ;
+            post_data['op'] = 'rsync';
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改成功", window.wxc.xcConfirm.typeEnum.success);
 // 					location.reload();
-				},
-		    	error:function(response){
-		    		btnObj.removeAttr('disabled');
-		    		window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
-		    	}
-			})
-		}
-  
-</script>
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("配置修改失败", window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
+
+        function addTenantPasswd(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var post_data = {};
+            var putUrl = '{% url 'bkapi_atp' %}';
+            var form = document.getElementById('addTenantPasswd');
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                post_data[name] = value;
+            }
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    {#alert(JSON.stringify(response))#}
+                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success);
+// 					location.reload();
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+
+        }
+
+        function modTenantPasswd(obj,tid) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var post_data = {};
+            var putUrl = '{% url 'bkapi_mtp' %}';
+            var form = document.getElementById('tenantPasswdMod-'+tid);
+            post_data['bc_name_id'] = tid;
+            post_data['bc_passwd'] = form[1].value;
+            {#alert(JSON.stringify(post_data))#}
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "PUT",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    {#alert(JSON.stringify(response))#}
+                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success);
+ 					location.reload();
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
+
+        function deleteTenantPasswd(obj,tid){
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var post_data = {};
+            var putUrl = '{% url 'bkapi_mtp' %}';
+            post_data['bc_name_id'] = tid;
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "DELETE",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    {#alert(JSON.stringify(response))#}
+                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success);
+ 					location.reload();
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
+
+    </script>
 
 {% endblock %}

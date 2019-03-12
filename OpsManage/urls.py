@@ -103,6 +103,9 @@ urlpatterns = [
     url(r'^wechat/',include('weChat.urls')),
     url(r'^dpyconsole/',include('deployconsole.urls')),
     url(r'^dns/',include('dnsc.urls')),
+    url(r'^sqlmon/',include('sqlmanage.urls')),
+    url(r'^logmon/',include('logmonitor.urls')),
+    url(r'^bakconsole/',include('backupconsole.urls')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

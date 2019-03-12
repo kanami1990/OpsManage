@@ -276,7 +276,42 @@
                     </div>
                     <!-- /.panel -->
                 </div>               
-            </div>            
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                         <div class="panel-heading">
+                            	<i class="glyphicon glyphicon-hdd  "></i> 租户规则
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>租户</th>
+                                            <th>分</th>
+                                            <th>时</th>
+                                            <th>天</th>
+                                            <th>周</th>
+                                            <th>月</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    	{% for ds in baseAssets.ttrule %}
+	                                        <tr>
+	                                            <td>{{ds.group.name}}</td>
+	                                            <td>{{ds.bc_minute}}</td>
+	                                            <td>{{ds.bc_hour}}</td>
+	                                            <td>{{ds.bc_day}}</td>
+	                                            <td>{{ds.bc_week}}</td>
+	                                            <td>{{ds.bc_month}}</td>
+	                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 </div>
 
 
@@ -560,7 +595,10 @@
 	} ); 
 	$(document).ready(function() {
 	    $('#projectList').DataTable();
-	} ); 	
+	} );
+	$(document).ready(function() {
+	    alert(JSON.stringify({{ baseAssets.ttrule }}))
+	} );
 	function addServiceData(obj) {
 		var btnObj = $(obj);
 		btnObj.attr('disabled',true);

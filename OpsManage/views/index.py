@@ -5,7 +5,7 @@ from OpsManage.utils import base
 from django.http import HttpResponseRedirect,JsonResponse
 from django.shortcuts import render
 from django.contrib import auth
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 from OpsManage.models import (Global_Config,Email_Config,Assets,
                               Cron_Config,Log_Assets,Project_Config,
@@ -13,6 +13,7 @@ from OpsManage.models import (Global_Config,Email_Config,Assets,
 from orders.models import Order_System
 from zabbix_api.models import Zabbix_Config
 from itop_api.models import ITOP_Config
+from backupconsole.models import (Rsync_Config,Tenant_passwd)
 from deployconsole.models import Jenkins_Config
 from django.contrib.auth.decorators import permission_required
 
@@ -145,7 +146,7 @@ def config(request):
         try:
             email = Email_Config.objects.get(id=1)
         except:
-            email =None
+            email = None
         try:
             zabbix = Zabbix_Config.objects.get(id=1)
         except:
@@ -154,12 +155,23 @@ def config(request):
             itop = ITOP_Config.objects.get(id=1)
         except:
             itop = None
-        # try:
-        #     jenkins = Jenkins_Config.objects.get(id=1)
-        # except:
-        #     jenkins = None
+        try:
+            rsync = Rsync_Config.objects.get(id=1)
+        except:
+            rsync = None
+        try:
+            group = Group.objects.all()
+        except:
+            group = None
+        try:
+            bkTenantPasswdList = Tenant_passwd.objects.all()
+            for item in bkTenantPasswdList:
+                item.group = Group.objects.get(id=item.bc_name_id)
+        except:
+            bkTenantPasswdList = None
         return render(request,'config.html',{"user":request.user,"config":config,
-                                                 "email":email,"zabbix":zabbix,"itop":itop})
+                                                 "email":email,"zabbix":zabbix,"itop":itop,'rsync':rsync,'group':group,
+                                             'bkTenantPasswdList':bkTenantPasswdList})
     elif request.method == "POST":
         if request.POST.get('op') == "log":
             try:
@@ -261,25 +273,27 @@ def config(request):
                     passwd=request.POST.get('passwd', None),
                 )
             return JsonResponse({'msg': '配置修改成功', "code": 200, 'data': []})
-        # elif request.POST.get('op') == "jenkins":
-        #     try:
-        #         count = Jenkins_Config.objects.filter(id=1).count()
-        #     except:
-        #         count = 0
-        #     if count > 0:
-        #         Jenkins_Config.objects.filter(id=1).update(
-        #             # site=request.POST.get('site'),
-        #             host=request.POST.get('host', None),
-        #             user=request.POST.get('user', None),
-        #             passwd=request.POST.get('passwd', None),
-        #
-        #         )
-        #     else:
-        #         Jenkins_Config.objects.create(
-        #             # site=request.POST.get('site'),
-        #             host=request.POST.get('host', None),
-        #             user=request.POST.get('user', None),
-        #             passwd=request.POST.get('passwd', None),
-        #         )
-        #     return JsonResponse({'msg': '配置修改成功', "code": 200, 'data': []})
-        #
+        elif request.POST.get('op') == "rsync":
+            base_bak_path = request.POST.get('base_bak_path')
+            base_bak_path = base_bak_path[:-1] if base_bak_path.endswith('/') else base_bak_path
+            try:
+                count = Rsync_Config.objects.filter(id=1).count()
+            except:
+                count = 0
+            if count > 0:
+                Rsync_Config.objects.filter(id=1).update(
+                    server=request.POST.get('server'),
+                    base_bak_path=base_bak_path,
+                    bak_user=request.POST.get('bak_user'),
+                    config_path=request.POST.get('config_path'),
+                    pass_path=request.POST.get('pass_path'),
+                )
+            else:
+                Rsync_Config.objects.create(
+                    server=request.POST.get('server'),
+                    base_bak_path=base_bak_path,
+                    bak_user=request.POST.get('bak_user'),
+                    config_path=request.POST.get('config_path'),
+                    pass_path=request.POST.get('pass_path'),
+                )
+            return JsonResponse({'msg': '配置修改成功', "code": 200, 'data': []})

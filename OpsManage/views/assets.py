@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from OpsManage.utils.logger import logger
 from OpsManage.utils.execl import CellWriter
+from backupconsole.models import *
 
 def getBaseAssets():
     try:
@@ -39,9 +40,15 @@ def getBaseAssets():
     try:
         projectList = Project_Assets.objects.all()
     except:
-        projectList = []          
+        projectList = []
+    try:
+        tenantRuleList = Tenant_rule.objects.all()
+        for item in tenantRuleList:
+            item.group = Group.objects.get(id=int(item.bc_name_id))
+    except:
+        tenantRuleList = []
     return {"group":groupList,"service":serviceList,"zone":zoneList,
-            "line":lineList,"raid":raidList,'project':projectList}
+            "line":lineList,"raid":raidList,'project':projectList,'ttrule':tenantRuleList}
 
 @login_required(login_url='/login')
 @permission_required('OpsManage.can_read_assets',login_url='/noperm/') 

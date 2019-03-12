@@ -168,8 +168,10 @@
 								</span>
                         </div> <!-- /input-group -->
                     </li>
+                    {% if user.is_superuser %}
                     <li><a href="/"><i class="fa fa-dashboard fa-fw"></i>
                         Dashboard</a></li>
+                    {% endif %}
                     {% if user.is_superuser %}
                         <li><a href="#"><i class="fa  fa-bank fa-fw"></i> 资产管理<span
                                 class="fa arrow"></span></a>
@@ -188,14 +190,14 @@
                                 <!-- 								<li><a href="/deploy_order/1/">部署工单</a></li> -->
                                 <li><a href="/deploy_log/1/">操作日志</a></li>
                             </ul> <!-- /.nav-second-level --></li>
-                        <li><a href="#"><i class="fa fa-table fa-fw"></i> 任务管理<span
-                                class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/cron_add">添加任务</a></li>
-                                <li><a href="/cron_config">批量导入</a></li>
-                                <li><a href="/cron_list/1/">任务列表</a></li>
-                                <li><a href="/cron_log/1/">操作日志</a></li>
-                            </ul> <!-- /.nav-second-level --></li>
+                        {#                        <li><a href="#"><i class="fa fa-table fa-fw"></i> 任务管理<span#}
+                        {#                                class="fa arrow"></span></a>#}
+                        {#                            <ul class="nav nav-second-level">#}
+                        {#                                <li><a href="/cron_add">添加任务</a></li>#}
+                        {#                                <li><a href="/cron_config">批量导入</a></li>#}
+                        {#                                <li><a href="/cron_list/1/">任务列表</a></li>#}
+                        {#                                <li><a href="/cron_log/1/">操作日志</a></li>#}
+                        {#                            </ul> <!-- /.nav-second-level --></li>#}
                         <li><a href="#"><i class="fa fa-sitemap fa-fw"></i> 应用部署<span
                                 class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
@@ -232,69 +234,104 @@
                                 <li><a href="/task_model/">调度类型</a></li>
                                 <li><a href="/task_view/">运行日志</a></li>
                             </ul> <!-- /.nav-second-level --></li>
-                        <li><a href="#"><i class="fa fa-angellist fa-fw"></i> zabbix功能<span
-                                class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/zabbix/list/">Email发送日志</a></li>
-                            </ul> <!-- /.nav-second-level --></li>
-                        <li><a href="#"><i class="fa fa-barcode fa-fw"></i> weChat功能<span
-                                class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/wechat/add/">新建APP</a></li>
-                                <li><a href="/wechat/list/">APP列表维护</a></li>
-                                <li><a href="/wechat/listlog/">发送日志</a></li>
-                            </ul> <!-- /.nav-second-level --></li>
-
-                        <li><a href="#"><i class="fa fa-venus fa-fw"></i> 投产管理<span
-                                class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/dpyconsole/list/">待投产任务</a></li>
-                                <li><a href="/dpyconsole/jenkins_list/">Jenkins维护</a></li>
-                            </ul> <!-- /.nav-second-level --></li>
-                        <li><a href="#"><i class="fa fa-venus fa-fw"></i> sql监控<span
-                                class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/sqlmon/db/list/">DB源管理</a></li>
-                                <li><a href="/sqlmon/sql/list/">SQL语句管理</a></li>
-                            </ul> <!-- /.nav-second-level --></li>
-                        <li><a href="#"><i class="fa fa-bookmark fa-fw"></i> 运维知识<span
-                                class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/wiki/add/">新建文档</a></li>
-                                <li><a href="/wiki/index/">文档列表</a></li>
-                            </ul> <!-- /.nav-second-level --></li>
-                        <li><a href="#"><i class="fa  fa-ticket fa-fw"></i> 工单系统<span
-                                class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="#">工单申请<span class="fa arrow"></span></a>
+                    {% endif %}
+                    <li><a href="#"><i class="fa fa-sitemap fa-fw"></i> 自定义功能<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            {% if perms.deployconsole.can_read_dpy_app %}
+                                <li><a href="#">投产管理<span
+                                        class="fa arrow"></span></a>
                                     <ul class="nav nav-third-level">
-                                        <li><a href="/order/deploy/apply/">代码部署</a></li>
-                                        <li><a href="/order/sql/apply/">上线SQL</a></li>
-                                        <li><a href="/order/file/upload/list/1/">文件分发</a></li>
-                                        <li><a href="/order/file/download/list/1/">文件下载</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="/order/list/1/">工单列表</a></li>
-                                <li><a href="/order/search/">工单查询</a></li>
-                            </ul> <!-- /.nav-second-level --></li>
+                                        <li><a href="/dpyconsole/list/">待投产任务</a></li>
+                                        {% if perms.deployconsole.can_add_dpy_app %}
+                                            <li><a href="/dpyconsole/jenkins_list/">Jenkins维护</a></li>
+                                        {% endif %}
+                                    </ul> <!-- /.nav-second-level --></li>
+                            {% endif %}
+                            {% if perms.backupconsole.can_read_backup_task %}
+                                <li><a href="#">Rsync控制台<span
+                                        class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        <li><a href='{% url 'bktask_list' %}'>Rsync 任务管理</a></li>
+                                        {% if perms.backupconsole.can_read_tenant_rule %}
+                                            <li><a href='{% url 'tt_add' %}'>添加租户规则</a></li>
+                                        {% endif %}
+                                    </ul> <!-- /.nav-second-level --></li>
+                            {% endif %}
+                            {% if perms.logmonitor.can_read_LogSign %}
+                                <li><a href="#">日志控制台<span
+                                        class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        {% if perms.logmonitor.can_add_LogSign %}
+                                            <li><a href="/logmon/log/">日志登录</a></li>
+                                        {% endif %}
+                                        <li><a href="/logmon/search/">日志查询</a></li>
+                                    </ul> <!-- /.nav-second-level --></li>
+                            {% endif %}
+                            {% if perms.dnsc.can_read_dns_zone %}
+                                <li><a href="#">DNS维护<span
+                                        class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        <li><a href="/dns/list/">DNS Zone列表</a></li>
+                                    </ul> <!-- /.nav-second-level --></li>
+                            {% endif %}
+                            {% if perms.sqlmanage.can_read_sqlmon_sqlinfo %}
+                                <li><a href="#">sql监控<span class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        {% if perms.sqlmanage.can_add_sqlmon_dbinfo %}
+                                            <li><a href="/sqlmon/db/list/">DB源管理</a></li>
+                                        {% endif %}
+                                        <li><a href="/sqlmon/sql/list/">SQL语句管理</a></li>
+                                    </ul> <!-- /.nav-second-level --></li>
+                            {% endif %}
+                            {% if perms.zabbix_api.can_read_zabbix %}
+                                <li><a href="#">zabbix功能<span
+                                        class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        <li><a href="/zabbix/list/">Email发送日志</a></li>
+                                    </ul> <!-- /.nav-second-level --></li>
+                            {% endif %}
+                            {% if perms.weChat.can_read_wechat_log %}
+                                <li><a href="#">weChat功能<span
+                                        class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        <li><a href="/wechat/add/">新建APP</a></li>
+                                        <li><a href="/wechat/list/">APP列表维护</a></li>
+                                        <li><a href="/wechat/listlog/">发送日志</a></li>
+                                    </ul> <!-- /.nav-second-level --></li>
+                            {% endif %}
+                        </ul> <!-- /.nav-second-level --></li>
+                    {#                        <li><a href="#"><i class="fa fa-bookmark fa-fw"></i> 运维知识<span#}
+                    {#                                class="fa arrow"></span></a>#}
+                    {#                            <ul class="nav nav-second-level">#}
+                    {#                                <li><a href="/wiki/add/">新建文档</a></li>#}
+                    {#                                <li><a href="/wiki/index/">文档列表</a></li>#}
+                    {#                            </ul> <!-- /.nav-second-level --></li>#}
+                    {#                        <li><a href="#"><i class="fa  fa-ticket fa-fw"></i> 工单系统<span#}
+                    {#                                class="fa arrow"></span></a>#}
+                    {#                            <ul class="nav nav-second-level">#}
+                    {#                                <li><a href="#">工单申请<span class="fa arrow"></span></a>#}
+                    {#                                    <ul class="nav nav-third-level">#}
+                    {#                                        <li><a href="/order/deploy/apply/">代码部署</a></li>#}
+                    {#                                        <li><a href="/order/sql/apply/">上线SQL</a></li>#}
+                    {#                                        <li><a href="/order/file/upload/list/1/">文件分发</a></li>#}
+                    {#                                        <li><a href="/order/file/download/list/1/">文件下载</a></li>#}
+                    {#                                    </ul>#}
+                    {#                                </li>#}
+                    {#                                <li><a href="/order/list/1/">工单列表</a></li>#}
+                    {#                                <li><a href="/order/search/">工单查询</a></li>#}
+                    {#                            </ul> <!-- /.nav-second-level --></li>#}
+                    {% if user.is_superuser %}
                         <li><a href="/config"><i class="fa fa-wrench fa-fw"></i>
                             全局配置</a></li>
                     {% endif %}
-                    <li><a href="#"><i class="fa  fa-bank fa-fw"></i> 日志控制台<span
-                            class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="/logmon/log/">日志登录</a></li>
-                            <li><a href="/logmon/search/">日志查询</a></li>
-                        </ul> <!-- /.nav-second-level --></li>
-                    <li><a href="#"><i class="fa fa-bus fa-fw"></i> DNS维护<span
-                                class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/dns/list/">DNS Zone列表</a></li>
-                            </ul> <!-- /.nav-second-level --></li>
+
                     <li><a href="#"><i class="fa fa-group "></i> 用户中心<span
                             class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
+                            {% if user.is_superuser %}
                             <li><a href="/users/manage">用户管理</a></li>
+                            {% endif %}
                             <li><a href="/user/center/">用户配置</a></li>
                             <li><a href="/logout">退出</a></li>
                         </ul> <!-- /.nav-second-level --></li>
