@@ -83,7 +83,7 @@ def task_add(request):
             file_args = """src={src} dest={dest} owner={user} group={user} mode=644""".format(src=src, dest=dest,user=rsync_server.bak_user)
             ANS.run_model(host_list=sList, module_name="copy", module_args=file_args)
             logger.info(msg='rtnMsg: rsync配置文件已新增节点 {}'.format(tag_name))
-            mkdir_args = """path={path} state={state} owner={owner}""".format(path=local_path, state='directory',owner=rsync_server.bak_user)
+            mkdir_args = """path={path} state={state}""".format(path=local_path, state='directory',owner=rsync_server.bak_user)
             ANS.run_model(host_list=sList, module_name="file", module_args=mkdir_args)
             logger.info(msg='rsync服务器已创建文件夹 {}'.format(local_path))
         logger.info(msg='------------- end process server config -------------')
