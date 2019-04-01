@@ -1,0 +1,401 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+    <!-- bootstrap-notify -->
+    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+{#    <script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>#}
+    <link href="/static/dist/css/bootstrap-multiselect.css" rel="stylesheet">
+    <script src="/static/dist/js/bootstrap-multiselect.js"></script>
+    <style type="text/css">
+        .dropdown-menu {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </style>
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa fa-user"></i> Nginx 列表</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="btn-group btn-group-xs pull-right">
+                            <button type="button" class="btn btn-default"><a href="#" data-toggle="modal"
+                                                                             data-target="#myNginxModal"><i
+                                    class="fa fa-refresh fa-fw"></i>Add Nginx</a></button>
+                        </div>
+                        <i class="fa  fa-github-alt  "></i> Nginx 列表
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer"
+                               id="appList">
+                            <thead>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">ng_tag</th>
+                                <th class="text-center">ng_server</th>
+                                <th class="text-center">ng_config_path</th>
+                                <th class="text-center">ng_log_path</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for ds in ngList %}
+                                <tr>
+                                    <td>{{ ds.id }}</td>
+                                    <td>{{ ds.ng_tag }}</td>
+                                    <td>{{ ds.ng_server.ip }}</td>
+                                    <td>{{ ds.ng_config_path }}</td>
+                                    <td>{{ ds.ng_log_path }}</td>
+                                    <td class="text-center">
+                                        <a href="/dns/ns_view/{{ ds.id }}" style="text-decoration:none;">
+                                            <button type="button" class="btn btn-xs btn-default"><abbr title="查看代理记录"><i
+                                                    class="glyphicon glyphicon-info-sign"></i></abbr></button>
+                                        </a>
+                                        <button type="button" class="btn btn-xs btn-default" data-toggle="modal"
+                                                data-target="#modfAppModal-{{ ds.id }}"><abbr title="编辑"><i
+                                                class="glyphicon glyphicon-edit"></i></abbr></button>
+                                        <button type="button" class="btn btn-xs btn-default"
+                                                onclick="delZoneData(this,{{ ds.id }})"><abbr title="删除"><i
+                                                class="glyphicon glyphicon-trash"></i></abbr></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+
+        {% for ds in ngList %}
+            <div class="modal fade" id="modfAppModal-{{ ds.id }}" tabindex="-1" role="dialog"
+                 aria-labelledby="modfAppModalLabel-{{ ds.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="modfAppModalLabel-{{ ds.id }}">
+                                Nginx信息
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form" id="app_{{ ds.id }}">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>ng_tag</strong></label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control" type="text" name="ng_tag"
+                                               value="{{ ds.ng_tag|default:"" }}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>ng_server</strong></label>
+                                    <select name="ng_server_id" id="ng_server_id" required>
+                                    {% for ds1 in assetsList %}
+                                        <option name="ng_server_id"
+                                                value="{{ ds1.server_assets.id }}">{{ ds1.server_assets.ip }}</option>
+                                    {% endfor %}
+                                </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>ng_config_path</strong></label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control" type="text" name="ng_config_path"
+                                               value="{{ ds.ng_config_path|default:"" }}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>ng_log_path</strong></label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control" type="text" name="ng_log_path"
+                                               value="{{ ds.ng_log_path|default:"" }}"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="modfZoneData(this,{{ ds.id }})">
+                                修改
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="modal fade" id="myNginxModal" tabindex="-1" role="dialog" aria-labelledby="myNginxModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myNginxModalLabel">
+                        添加Nginx配置
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" method="post" id="addNginx" class="main form-horizontal">{% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> ng_tag</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="ng_tag"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> 服务器</label>
+                            <div class="col-sm-6">
+                                <select name="ng_server_id" id="ng_server_id" required>
+                                    {% for ds in assetsList %}
+                                        <option name="ng_server_id"
+                                                value="{{ ds.server_assets.id }}">{{ ds.server_assets.ip }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> ng_config_path</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空"
+                                       name="ng_config_path"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> ng_log_path</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="ng_log_path"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addNginxClient(this)">
+                        添加
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#ng_server_id').multiselect({
+                enableClickableOptGroups: true,
+                enableCollapsibleOptGroups: true,
+                includeSelectAllOption: true,
+                enableFiltering: true,
+            });
+        });
+
+        function modfZoneData(obj, id) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var post_data = {};
+
+            var putUrl = '/dns/nginx/' + id + '/';
+            var form = document.getElementById('app_' + id);
+
+
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                post_data[name] = value;
+
+
+            }
+            $.ajax({
+                dataType: "JSON",
+                url: putUrl, //请求地址
+                type: "PUT",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    $.notify({
+                            title: "<strong>Nginx：</strong>",
+                            message: response.rtnMsg
+                        },
+                        {
+                            type: 'info'
+                        });
+                    location.reload();
+                },
+                error: function (response) {
+                    {#alert(JSON.stringify(response))#}
+                    $.notify({
+                            title: "<strong>Nginx：</strong>",
+                            {#message: '任务执行失败！'#}
+                            message: JSON.stringify(response.responseJSON.rtnMsg)
+                        },
+                        {
+                            type: 'danger'
+                        });
+                    btnObj.removeAttr('disabled');
+                }
+            })
+        }
+
+        function delZoneData(obj, id) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var txt = "是否确认删除？";
+            var post_data = {};
+            var putUrl = '/dns/nginx/' + id + '/';
+            var option = {
+                title: "id-" + id,
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: putUrl,
+                        success: function (response) {
+                            $.notify({
+                                    title: "<strong>Nginx：</strong>",
+                                    message: response.rtnMsg
+                                },
+                                {
+                                    type: 'info'
+                                });
+                            location.reload();
+                        },
+                        error: function (response) {
+                            {#alert(JSON.stringify(response))#}
+                            $.notify({
+                                    title: "<strong>Nginx：</strong>",
+                                    {#message: '任务执行失败！'#}
+                                    message: response.responseJSON.rtnMsg
+                                },
+                                {
+                                    type: 'danger'
+                                });
+                            btnObj.removeAttr('disabled');
+                        }
+                    });
+                },
+                onCancel: function () {
+                },
+                onClose: function () {
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+
+        function updateZoneData(obj, op, id) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var txt = "更新Token有次数限制，是否进行强制更新？";
+            var post_data = {};
+            if (op == "app") {
+                var putUrl = '/dns/zone/' + id + '/';
+            }
+            var option = {
+                title: "id-" + id,
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: putUrl,
+                        success: function (response) {
+                            $.notify({
+                                    title: "<strong>Nginx：</strong>",
+                                    message: response.rtnMsg
+                                },
+                                {
+                                    type: 'info'
+                                });
+                            location.reload();
+                        },
+                        error: function (response) {
+                            {#alert(JSON.stringify(response))#}
+                            $.notify({
+                                    title: "<strong>Nginx：</strong>",
+                                    {#message: '任务执行失败！'#}
+                                    message: response.responseJSON.rtnMsg
+                                },
+                                {
+                                    type: 'danger'
+                                });
+                            btnObj.removeAttr('disabled');
+                        }
+                    });
+                },
+                onCancel: function () {
+                },
+                onClose: function () {
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+
+        function addNginxClient(obj) {
+            var btnObj = $(obj);
+            var required = ["ng_tag", "ng_server_id", "ng_config_path", "ng_log_path"];
+            btnObj.attr('disabled', true);
+            var form = document.getElementById('addNginx');
+            var post_data = {};
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+                ;
+            }
+            ;
+            var post_url = '{% url 'nginx_add' %}';
+            $.ajax({
+                dataType: "JSON",
+                url: post_url, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    $.notify({
+                            title: "<strong>Nginx：</strong>",
+                            message: response.rtnMsg
+                        },
+                        {
+                            type: 'info'
+                        });
+                    location.reload();
+                },
+                error: function (response) {
+                    {#alert(JSON.stringify(response))#}
+                    $.notify({
+                            title: "<strong>Nginx：</strong>",
+                            {#message: '任务执行失败！'#}
+                            message: response.responseJSON.rtnMsg
+                        },
+                        {
+                            type: 'danger'
+                        });
+                    btnObj.removeAttr('disabled');
+                }
+            })
+        }
+    </script>
+{% endblock %}

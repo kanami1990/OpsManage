@@ -1,0 +1,355 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+    <!-- bootstrap-notify -->
+    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+    {#<script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>#}
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa fa-user"></i> SQL列表</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="btn-group btn-group-xs pull-right">
+                            <button type="button" class="btn btn-default"><a href="#" data-toggle="modal"
+                                                                             data-target="#mySQLModal"><i
+                                    class="fa fa-refresh fa-fw"></i>XXOO</a></button>
+                        </div>
+                        <i class="fa  fa-github-alt  "></i> SQL
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer"
+                               id="taskTableList">
+                            <thead>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">Zabbix Key</th>
+                                <th class="text-center">标签</th>
+                                <th class="text-center">数据库</th>
+                                <th class="text-center">SQL</th>
+                                <th class="text-center">状态</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">Zabbix Key</th>
+                                <th class="text-center">标签</th>
+                                <th class="text-center">数据库</th>
+                                <th class="text-center">SQL</th>
+                                <th class="text-center">状态</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </tfoot>
+                            <tbody>
+                            {% for ds in sqlList %}
+                                <tr>
+                                    <td class="text-center">
+                                        {{ ds.id }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.sql_key }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.sql_tag }}
+                                    </td>
+                                    <td class="text-center">
+                                        {% for d in dblist %}
+                                            {% if ds.sql_db == d.id %}
+                                                {{ d.db_name }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.sql_info }}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if ds.sql_enabled == 0 %}
+                                            <span class="label label-info">Enabled</span>
+                                        {% else %}
+                                            <span class="label label-info">Disabled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-default" data-toggle="modal"
+                                                        data-target="#mySQLEditModal-{{ ds.id }}">
+                                                    <abbr title="編輯"><i class="fa fa-edit"></i></abbr>
+                                                </button>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-default"
+                                                        onclick="delSQL(this,'{{ ds.db_host }}-{{ ds.db_name }}',{{ ds.id }})">
+                                                    <abbr title="删除"><i class="fa fa-trash"></i></abbr>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+
+    </div>
+    <div class="modal fade" id="mySQLModal" tabindex="-1" role="dialog" aria-labelledby="mySQLModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="mySQLModalLabel">
+                        添加SQL配置
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" method="post" id="addSql" class="main form-horizontal">{% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> Zabbix Key</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="sql_key"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> SQL标签</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="sql_tag"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-gears"></i> 数据库</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="sql_db" id="sql_db">
+                                    {% for d in dblist %}
+                                        <option value="{{ d.id }}" name="sql_db">{{ d.db_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-subscript"></i> SQL</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="sql_info"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-user"></i> 状态</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="sql_enabled" id="sql_enabled">
+                                    <option value="0" name="sql_enabled">启用</option>
+                                    <option value="1" name="sql_enabled">禁用</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addSQL(this)">
+                        添加
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    {% for ds in sqlList %}
+        <div class="modal fade" id="mySQLEditModal-{{ ds.id }}" tabindex="-1" role="dialog"
+             aria-labelledby="mySQLEditModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="mySQLEditModalLabel">
+                            修改SQL配置
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" method="post" id="editSQL-{{ ds.id }}"
+                              class="main form-horizontal">{% csrf_token %}
+                            <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> Zabbix Key</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="{{ ds.sql_key|default:"" }}" placeholder="不能为空" name="sql_key"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> 标签</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="{{ ds.sql_tag|default:"" }}" placeholder="不能为空" name="sql_tag"/>
+                            </div>
+                        </div>
+                        <input class="form-control" type="hidden" value="mysql" name="db_type"/>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-gears"></i> DB</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="sql_db" id="sql_db_{{ds.id}}">
+                                    {% for d in dblist %}
+                                        {% if d.id == ds.sql_db %}
+                                            <option value="{{ ds.id }}" name="sql_db">{{ d.db_name }}</option>
+                                        {% endif %}
+                                        <option value="{{ d.id }}" name="sql_db">{{ d.db_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-globe"></i> SQL</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="{{ ds.sql_info|default:"" }}" placeholder="不能为空" name="sql_info"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-subscript"></i> 状态</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="sql_enabled" id="sql_enable">
+                                    <option value=0 name="sql_enabled">启用</option>
+                                    <option value=1 name="sql_enabled">禁用</option>
+                                </select>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="editSQL(this,{{ ds.id }})">
+                            修改
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    {% endfor %}
+    <script type="text/javascript">
+        function addSQL(obj) {
+            var btnObj = $(obj);
+            var required = ["sql_key", "sql_tag", "sql_db", "sql_info", "sql_enabled"];
+            btnObj.attr('disabled', true);
+            var form = document.getElementById('addSql');
+            var post_data = {};
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+                ;
+            }
+            ;
+            $.ajax({
+                dataType: "JSON",
+                url: '/sqlmon/sql/config/', //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("数据库添加成功", window.wxc.xcConfirm.typeEnum.success);
+                    location.reload();
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("数据库添加失败", window.wxc.xcConfirm.typeEnum.error);
+                    /* 	    		location.reload(); */
+                }
+            })
+        }
+
+	    function editSQL(obj,id) {
+		var btnObj = $(obj);
+		var required = ["sql_key", "sql_tag", "sql_db", "sql_info", "sql_enable"];
+		btnObj.attr('disabled',true);
+		var form = document.getElementById('editSQL-' + id);
+		var post_data = {};
+		for (var i = 1; i < form.length; ++i) {
+			var name = form[i].name;
+			var value = form[i].value;
+			idx = $.inArray(name, required);
+			if (idx >= 0 && value.length == 0){
+				window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+				btnObj.removeAttr('disabled');
+				return false;
+			};
+			if ( value.length != 0 && name.length != 0 ){
+				post_data[name] = value;
+			};
+		};
+		$.ajax({
+			dataType: "JSON",
+			url:'/sqlmon/sql/config/'+ id +'/', //请求地址
+			type:"PUT",  //提交类似
+			data:post_data, //提交参数
+			success:function(response){
+				btnObj.removeAttr('disabled');
+				window.wxc.xcConfirm("数据库修改成功", window.wxc.xcConfirm.typeEnum.success);
+ 				location.reload();
+
+			},
+	    	error:function(response){
+	    		btnObj.removeAttr('disabled');
+	    		alert(JSON.stringify(response))
+	    		window.wxc.xcConfirm(response.responseJSON.data, window.wxc.xcConfirm.typeEnum.error);
+/* 	    		location.reload(); */
+	    	}
+		})
+	    }
+
+	    function delSQL(obj,name,id){
+		var btnObj = $(obj);
+		var txt=  "是否确认删除？";
+		var option = {
+				title: "删除数据("+name+")配置",
+				btn: parseInt("0011",2),
+				onOk: function(){
+					$.ajax({
+						  type: 'DELETE',
+						  url: '/sqlmon/sql/config/'+ id +'/',
+					      success:function(response){
+								btnObj.removeAttr('disabled');
+								window.wxc.xcConfirm("数据库删除成功", window.wxc.xcConfirm.typeEnum.success);
+								location.reload();
+						},
+			            error:function(response){
+				    		btnObj.removeAttr('disabled');
+				    		alert(response.data)
+				    		window.wxc.xcConfirm("数据库删除失败~", window.wxc.xcConfirm.typeEnum.error);
+			            },
+						});
+				},
+				onCancel:function(){
+				},
+				onClose:function(){
+				}
+			}
+		window.wxc.xcConfirm(txt, "custom", option);
+	}
+    </script>
+{% endblock %}

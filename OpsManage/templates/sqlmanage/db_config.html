@@ -1,0 +1,475 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+    <!-- bootstrap-notify -->
+    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+    {#<script type="text/javascript" src="/static/js/reconnecting-websocket.js"></script>#}
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa fa-user"></i> WeChat应用列表</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="btn-group btn-group-xs pull-right">
+                            <button type="button" class="btn btn-default"><a href="#" data-toggle="modal"
+                                                                             data-target="#myDatabaseModal"><i
+                                    class="fa fa-refresh fa-fw"></i>OOXX</a></button>
+                        </div>
+                        <i class="fa  fa-github-alt  "></i> 已注册微信App列表
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer"
+                               id="taskTableList">
+                            <thead>
+                            <tr>
+{#                                <th class="text-center">详细</th>#}
+                                <th class="text-center">ID</th>
+                                <th class="text-center">标签</th>
+                                <th class="text-center">使用租户</th>
+                                <th class="text-center">类型</th>
+                                <th class="text-center">地址</th>
+                                <th class="text-center">端口</th>
+                                <th class="text-center">账户</th>
+                                <th class="text-center">数据库名</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+{#                                <th class="text-center">详细</th>#}
+                                <th class="text-center">ID</th>
+                                <th class="text-center">标签</th>
+                                <th class="text-center">使用租户</th>
+                                <th class="text-center">类型</th>
+                                <th class="text-center">地址</th>
+                                <th class="text-center">端口</th>
+                                <th class="text-center">账户</th>
+                                <th class="text-center">数据库名</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </tfoot>
+                            <tbody>
+                            {% for ds in dblist %}
+                                <tr>
+                                    <td class="text-center">
+                                        {{ ds.id }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.db_role }}
+                                    </td>
+                                    <td class="text-center">
+                                        {% for d in groupList %}
+                                            {% if d.id == ds.db_owner %}
+                                                {{ d.name }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if ds.db_type == 1 %}
+                                            <span class="label label-info">MySQL</span>
+                                        {% else %}
+                                            <span class="label label-info">ORACLE</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.db_ip }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.db_port }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.db_user }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ ds.db_name }}
+                                    </td>
+                                    <td class="text-center">
+                                        <div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-default" data-toggle="modal"
+                                                        data-target="#myDatabaseEditModal-{{ ds.id }}">
+                                                    <abbr title="編輯"><i class="fa fa-edit"></i></abbr>
+                                                </button>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-default"
+                                                        onclick="delDatabaseSever(this,'{{ ds.db_host }}-{{ ds.db_name }}',{{ ds.id }})">
+                                                    <abbr title="删除"><i class="fa fa-trash"></i></abbr>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+
+    </div>
+    <div class="modal fade" id="myDatabaseModal" tabindex="-1" role="dialog" aria-labelledby="myDatabaseModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myDatabaseModalLabel">
+                        添加数据库配置
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" method="post" id="addDatabase" class="main form-horizontal">{% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> db标签</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="db_role"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> DB所属租户</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="db_owner" id="db_owner"
+                                        onchange="javascript:oBtGroupSelect();">
+                                    <option selected="selected" value="">请选择一个类型</option>
+                                    {% for g in groupList %}
+                                        <option value="{{ g.id }}" name="db_owner">{{ g.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <input class="form-control" type="hidden" value="mysql" name="db_type"/>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-gears"></i> DB类型</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="db_type">
+                                    <option value="1" name="db_type">MySQL</option>
+                                    <option value="2" name="db_type">ORACLE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-globe"></i> 数据库IP</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="db_ip" id="db_ip">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-subscript"></i> 端口</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="db_port"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-user"></i> 账户</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="db_user"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-keyboard-o"></i> 密码</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="password" value="" placeholder="不能为空"
+                                       name="db_passwd"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-database"></i> 数据库名</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="db_name"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addDatabaseSever(this)">
+                        添加
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    {% for ds in dblist %}
+        <div class="modal fade" id="myDatabaseEditModal-{{ ds.id }}" tabindex="-1" role="dialog"
+             aria-labelledby="myDatabaseEditModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myDatabaseEditModalLabel">
+                            修改数据库配置
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" method="post" id="editDatabase-{{ ds.id }}"
+                              class="main form-horizontal">{% csrf_token %}
+                            <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> db标签</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="{{ ds.db_role|default:"" }}" placeholder="不能为空" name="db_role"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-map-marker  "></i> DB所属租户</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="db_owner" id="db_owner_{{ds.id}}"
+                                        onchange="javascript:oBtGroupModSelect({{ ds.id }});">
+                                    <option  value="">请选择一个类型</option>
+                                    {% for g in groupList %}
+{#                                        {% if ds.db_owner == g.id %}#}
+{#                                             <option selected="selected" value="{{ g.id }}" name="db_owner">{{ g.name }}</option>#}
+{#                                        {% else %}#}
+                                            <option value="{{ g.id }}" name="db_owner">{{ g.name }}</option>
+{#                                        {% endif %}#}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <input class="form-control" type="hidden" value="mysql" name="db_type"/>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-gears"></i> DB类型</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="db_type" id="db_type_{{ds.id}}">
+                                    <option value="1" name="db_type">MySQL</option>
+                                    <option value="2" name="db_type">ORACLE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-globe"></i> 数据库IP</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="db_ip" id="db_ip_{{ds.id}}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-subscript"></i> 端口</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="{{ds.db_port|default:""}}" placeholder="不能为空" name="db_port"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-user"></i> 账户</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="{{ds.db_user|default:""}}" placeholder="不能为空" name="db_user"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-keyboard-o"></i> 密码</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="password" value="{{ds.db_passwd|default:""}}" placeholder="不能为空"
+                                       name="db_passwd"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-database"></i> 数据库名</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="{{ds.db_name|default:""}}" placeholder="不能为空" name="db_name"/>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="editDatabaseSever(this,{{ ds.id }})">
+                            修改
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    {% endfor %}
+    <script type="text/javascript">
+        function addDatabaseSever(obj) {
+            var btnObj = $(obj);
+            var required = ["db_role", "db_owner", "db_type", "db_ip", "db_port", "db_user", "db_passwd", "db_name"];
+            btnObj.attr('disabled', true);
+            var form = document.getElementById('addDatabase');
+            var post_data = {};
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+                ;
+            }
+            ;
+            $.ajax({
+                dataType: "JSON",
+                url: '/sqlmon/db/config/', //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("数据库添加成功", window.wxc.xcConfirm.typeEnum.success);
+                    location.reload();
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("数据库添加失败", window.wxc.xcConfirm.typeEnum.error);
+                    /* 	    		location.reload(); */
+                }
+            })
+        }
+
+        function oBtGroupSelect() {
+            $('#db_ip').removeAttr("disabled");
+            var obj = document.getElementById("db_owner");
+            var index = obj.selectedIndex;
+            var gid = obj.options[index].value;
+            if (gid > 0) {
+                $.ajax({
+                    dataType: "JSON",
+                    url: '/sqlmon/api/asset/', //请求地址
+                    type: "POST",  //提交类似
+                    data: {
+                        "gid": gid,
+                    },
+                    success: function (response) {
+                        var binlogHtml = '<select multiple class="form-control"  name="db_ip" id="db_ip"  required>'
+                        var selectHtml = '';
+                        for (var i = 0; i < response["data"].length; i++) {
+                            selectHtml += '<option name="db_ip" value="' + response["data"][i]["ip"] + '">' + response["data"][i]["ip"] + '</option>'
+                        }
+                        ;
+                        binlogHtml = binlogHtml + selectHtml + '</select>';
+                        document.getElementById("db_ip").innerHTML = binlogHtml;
+
+                    },
+                });
+            } else {
+                $('#db_ip option:selected').empty();
+                $('#db_ip').attr("disabled", true);
+            }
+
+        }
+
+        function oBtGroupModSelect(id){
+	 	   $('#db_ip_'+id).removeAttr("disabled");
+		   var obj = document.getElementById("db_owner_"+id);
+		   var index = obj.selectedIndex;
+		   var gid = obj.options[index].value;
+		   if ( gid  > 0){
+				$.ajax({
+					dataType: "JSON",
+					url:'/sqlmon/api/asset/', //请求地址
+					type:"POST",  //提交类似
+					data:{
+						"gid":gid,
+					},
+					success:function(response){
+						var binlogHtml = '<select multiple class="form-control"  name="db_ip" id="db_ip—'+ id + '" required>'
+						var selectHtml = '';
+						for (var i=0; i <response["data"].length; i++){
+							 selectHtml += '<option name="db_ip" value="'+ response["data"][i]["ip"] +'">' + response["data"][i]["ip"] + '</option>'
+						};
+						binlogHtml =  binlogHtml + selectHtml + '</select>';
+						document.getElementById("db_ip_"+id).innerHTML= binlogHtml;
+
+					},
+				});
+		   }
+		   else{
+			   $('#db_ip_'+ id + 'option:selected').empty();
+			   $('#db_ip_'+ id).attr("disabled",true);
+		   }
+
+	    }
+
+	    function editDatabaseSever(obj,id) {
+		var btnObj = $(obj);
+		var required = ["db_owner","db_role","db_type","db_ip","db_port","db_user","db_passwd","db_name"];
+		btnObj.attr('disabled',true);
+		var form = document.getElementById('editDatabase-' + id);
+		var post_data = {};
+		for (var i = 1; i < form.length; ++i) {
+			var name = form[i].name;
+			var value = form[i].value;
+			idx = $.inArray(name, required);
+			if (idx >= 0 && value.length == 0){
+				window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+				btnObj.removeAttr('disabled');
+				return false;
+			};
+			if ( value.length != 0 && name.length != 0 ){
+				post_data[name] = value;
+			};
+		};
+		$.ajax({
+			dataType: "JSON",
+			url:'/sqlmon/db/config/'+ id +'/', //请求地址
+			type:"PUT",  //提交类似
+			data:post_data, //提交参数
+			success:function(response){
+				btnObj.removeAttr('disabled');
+				window.wxc.xcConfirm("数据库修改成功", window.wxc.xcConfirm.typeEnum.success);
+ 				location.reload();
+
+			},
+	    	error:function(response){
+	    		btnObj.removeAttr('disabled');
+	    		window.wxc.xcConfirm("数据库修改失败", window.wxc.xcConfirm.typeEnum.error);
+/* 	    		location.reload(); */
+	    	}
+		})
+	    }
+
+	    function delDatabaseSever(obj,name,id){
+		var btnObj = $(obj);
+		var txt=  "是否确认删除？";
+		var option = {
+				title: "删除数据("+name+")配置",
+				btn: parseInt("0011",2),
+				onOk: function(){
+					$.ajax({
+						  type: 'DELETE',
+						  url: '/sqlmon/db/config/'+ id +'/',
+					      success:function(response){
+								btnObj.removeAttr('disabled');
+								window.wxc.xcConfirm("数据库删除成功", window.wxc.xcConfirm.typeEnum.success);
+								location.reload();
+						},
+			            error:function(response){
+				    		btnObj.removeAttr('disabled');
+				    		window.wxc.xcConfirm("数据库删除失败~", window.wxc.xcConfirm.typeEnum.error);
+			            },
+						});
+				},
+				onCancel:function(){
+				},
+				onClose:function(){
+				}
+			}
+		window.wxc.xcConfirm(txt, "custom", option);
+	}
+    </script>
+{% endblock %}

@@ -10,8 +10,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from . import serializers
-from dnsc.models import (Dns_Zone)
+from dnsc.models import (Dns_Zone,Nginx,Nginx_Server)
 import dns.resolver,dns.zone,dns.tsigkeyring,dns.update
+from OpsManage.models import (Assets)
 
 # Create your views here.
 @permission_required('dnsc.can_read_dns_zone',login_url='/noperm/')
@@ -68,12 +69,14 @@ def listRecord(request,aid):
         domain = zone.domain_zone
         # keyring = dnsc.tsigkeyring.from_text({key:secret})
         query = dns.zone.from_xfr(dns.query.xfr(dns_host,domain))
+        my_resolver = dns.resolver.Resolver(configure=False)
+        my_resolver.nameservers = [dns_host]
         dnsRRList = []
         for i in query.iterkeys():
             i =  i.to_text()
             if  '@'not in  i:
                 tempDict = {}
-                r = dns.resolver.query("{}.{}".format(i,domain),'A')
+                r = my_resolver.query("{}.{}".format(i,domain),'A')
                 tempDict['rr_record'] = i.__str__()
                 tempDict['rr_ttl'] = r.__getattr__('ttl')
                 tempDict['rr_type'] = 'A'
@@ -85,3 +88,39 @@ def listRecord(request,aid):
     except:
         dnsRRList = []
     return render(request, 'dns/record_list.html', {'recordlist':dnsRRList})
+
+@permission_required('dnsc.can_read_nginx',login_url='/noperm/')
+def listNginx(request):
+    try:
+        ngList = Nginx.objects.filter(ng_status=0)
+    except:
+        ngList = []
+    try:
+        if request.user.is_superuser:
+            assetsList = Assets.objects.filter(assets_type='server', status=0)
+        else:
+            gids = request.user.groups.values_list('id', flat=True)
+            assetsList = Assets.objects.filter(assets_type='server', status=0, group__in=gids)
+    except:
+        assetsList = []
+    return render(request, 'dns/nginx_list.html', {'ngList':ngList,'assetsList':assetsList})
+
+@permission_required('dnsc.can_read_nginx',login_url='/noperm/')
+def listNginxServer(request,id):
+    try:
+        nsList = Nginx_Server.objects.filter(ns_ng_id=id)
+    except:
+        nsList = []
+    try:
+        domainList = Dns_Zone.objects.all()
+    except:
+        nsList = []
+    try:
+        if request.user.is_superuser:
+            assetsList = Assets.objects.filter(assets_type='server', status=0)
+        else:
+            gids = request.user.groups.values_list('id', flat=True)
+            assetsList = Assets.objects.filter(assets_type='server', status=0, group__in=gids)
+    except:
+        assetsList = []
+    return render(request, 'dns/nginx_server_list.html', {'nsList':nsList,'ngid':id,'assetsList':assetsList,'domainList':domainList})

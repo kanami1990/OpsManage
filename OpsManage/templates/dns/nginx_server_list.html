@@ -1,0 +1,264 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+    <!-- bootstrap-notify -->
+    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+    <link href="/static/dist/css/bootstrap-multiselect.css" rel="stylesheet">
+    <script src="/static/dist/js/bootstrap-multiselect.js"></script>
+    <style type="text/css">
+        .dropdown-menu {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </style>
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa fa-user"></i> Nginx Server 列表</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="btn-group btn-group-xs pull-right">
+                            <button type="button" class="btn btn-default"><a href="#" data-toggle="modal"
+                                                                             data-target="#myNginxServerModal"><i
+                                    class="fa fa-refresh fa-fw"></i>Add Nginx Server</a></button>
+                        </div>
+                        <i class="fa  fa-github-alt  "></i> Nginx Server 列表
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer"
+                               id="appList">
+                            <thead>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">标签</th>
+                                <th class="text-center">域名</th>
+                                <th class="text-center">远程主机</th>
+                                <th class="text-center">远程端口</th>
+                                <th class="text-center">Nginx代理端口</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for ds in nsList %}
+                                <tr>
+                                    <td>{{ ds.id }}</td>
+                                    <td>{{ ds.ns_ng.ng_tag }}</td>
+                                    <td>{{ ds.ns_rr }}.{{ ds.ns_domain.domain_zone }}</td>
+                                    <td>{{ ds.ns_sip.ip }}</td>
+                                    <td>{{ ds.ns_rport }}</td>
+                                    <td>{{ ds.ns_sport }}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-xs btn-default"
+                                                onclick="delNSData(this,{{ ds.id }})"><abbr title="删除"><i
+                                                class="glyphicon glyphicon-trash"></i></abbr></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myNginxServerModal" tabindex="-1" role="dialog"
+         aria-labelledby="myNginxServerModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myNginxServerModalLabel">
+                        添加NginxServer配置
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" method="post" id="addNginxServer" class="main form-horizontal">{% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> 二级域名</label>
+                            <div class="col-sm-6">
+                                <input class="form-control col-sm-3" type="text" value="" placeholder="不能为空" name="ns_rr"/>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> 一级域名</label>
+                            <div class="col-sm-6">
+                            <select name="ns_domain_id" id="ns_domain_id" required>
+                                {% for ds2 in domainList %}
+                                    <option name="ns_domain_id"
+                                            value="{{ ds2.id }}">{{ ds2.domain_zone }}</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong> 远程主机</strong></label>
+                            <div class="col-sm-6">
+                            <select name="ns_sip_id" id="ns_sip_id" required>
+                                {% for ds1 in assetsList %}
+                                    <option name="ns_sip_id"
+                                            value="{{ ds1.server_assets.id }}">{{ ds1.server_assets.ip }}</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> 远程端口</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空"
+                                       name="ns_rport"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><i class="fa fa-shield  "></i> Nginx代理端口</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="ns_sport"/>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addNginxServer(this)">
+                        添加
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#ns_sip_id').multiselect({
+                enableClickableOptGroups: true,
+                enableCollapsibleOptGroups: true,
+                includeSelectAllOption: true,
+                enableFiltering: true,
+            });
+            $('#ns_domain_id').multiselect({
+                enableClickableOptGroups: true,
+                enableCollapsibleOptGroups: true,
+                includeSelectAllOption: true,
+                enableFiltering: true,
+            });
+        });
+
+        function delNSData(obj, id) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var txt = "是否确认删除？";
+            var post_data = {};
+            var putUrl = '/dns/nginx_server/' + id + '/';
+            var option = {
+                title: "id-" + id,
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: putUrl,
+                        success: function (response) {
+                            $.notify({
+                                    title: "<strong>Nginx：</strong>",
+                                    message: response.rtnMsg
+                                },
+                                {
+                                    type: 'info'
+                                });
+                            location.reload();
+                        },
+                        error: function (response) {
+                            {#alert(JSON.stringify(response))#}
+                            $.notify({
+                                    title: "<strong>Nginx：</strong>",
+                                    {#message: '任务执行失败！'#}
+                                    message: response.responseJSON.rtnMsg
+                                },
+                                {
+                                    type: 'danger'
+                                });
+                            btnObj.removeAttr('disabled');
+                        }
+                    });
+                },
+                onCancel: function () {
+                },
+                onClose: function () {
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+
+        function addNginxServer(obj) {
+            var btnObj = $(obj);
+            var required = ["ns_rr", "ns_rport", "ns_sport", "ns_sip"];
+            btnObj.attr('disabled', true);
+            var form = document.getElementById('addNginxServer');
+            var post_data = {};
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+                if (value.length != 0 && name.length != 0) {
+                    post_data[name] = value;
+                }
+            }
+            if (post_data['ns_rport'] == '80') {
+                window.wxc.xcConfirm("默认80端口请使用DNS解析功能", window.wxc.xcConfirm.typeEnum.error);
+                btnObj.removeAttr('disabled');
+                return false;
+            }
+            post_data['ns_ng'] = '{{ ngid }}'
+            var post_url = '{% url 'nginxserver_add' %}';
+            $.ajax({
+                dataType: "JSON",
+                url: post_url, //请求地址
+                type: "POST",  //提交类似
+                data: post_data, //提交参数
+                success: function (response) {
+                    $.notify({
+                            title: "<strong>Nginx：</strong>",
+                            message: response.rtnMsg
+                        },
+                        {
+                            type: 'info'
+                        });
+                    location.reload();
+                },
+                error: function (response) {
+                    {#alert(JSON.stringify(response))#}
+                    $.notify({
+                            title: "<strong>Nginx：</strong>",
+                            {#message: '任务执行失败！'#}
+                            message: response.responseJSON.rtnMsg
+                        },
+                        {
+                            type: 'danger'
+                        });
+                    btnObj.removeAttr('disabled');
+                }
+            })
+        }
+    </script>
+{% endblock %}

@@ -41,8 +41,12 @@ def osDecode(os):
         else:
             return ['windows','2008 r2']
     elif re.match(ubuntu,os):
-        fieldList = os.split(' ')
-        return ['Ubuntu',fieldList[1]]
+        verR = '\d\+.\d+'
+        ver = re.search(verR, os)
+        if ver:
+            return ['ubuntu', ver.group()]
+        else:
+            return ['ubuntu', '18.04']
     else:
         return [None,None]
 

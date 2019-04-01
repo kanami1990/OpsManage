@@ -274,6 +274,7 @@
                                                 <th class="text-center">Git路径</th>
                                                 <th class="text-center">任务状态</th>
                                                 <th class="text-center">负责人</th>
+                                                <th class="text-center">attachid</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -293,6 +294,7 @@
                                                         {% endif %}
                                                     </td>
                                                     <td class="text-center">{{ entry.dev_p_id_friendlyname }}</td>
+                                                    <td class="text-center">{{ entry.attachid }}</td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
@@ -372,10 +374,26 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            $('#JenkinsList').DataTable();
+            $('#JenkinsList').DataTable({
+                    "pageLength": 50
+                });
         });
         $(document).ready(function () {
-            $('#DbList').DataTable();
+            $('#DbList').DataTable({
+                "pageLength": 50,
+                "columns": [
+                null,
+	            null,
+	            null,
+	            null,
+	            null,
+	            null,
+	            null,
+	            null,
+	            { "visible": false },
+	        ],
+	        "order": [[1, 'asc']]
+                });
         });
 
         function doTask(obj, taskname, dpno) {
